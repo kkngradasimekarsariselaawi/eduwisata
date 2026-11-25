@@ -83,7 +83,8 @@
         <div class="relative w-full h-48 sm:h-56 lg:hidden overflow-hidden shrink-0">
             <img 
                 id="login-hero-mobile"
-                src=""
+                onload="this.classList.remove('opacity-0')"
+                onerror="this.classList.add('hidden')"
                 alt="" 
                 class="w-full h-full object-cover object-center scale-105"
             />
@@ -304,7 +305,8 @@
             <!-- High-Resolution Nature & Bamboo Tourism Landscape Photo -->
             <img
                 id="login-hero-desktop"
-                src=""
+                onload="this.classList.remove('opacity-0')"
+                onerror="this.classList.add('hidden')"
                 alt="" 
                 class="absolute inset-0 w-full h-full object-cover object-center transform scale-105 transition-transform duration-1000 hover:scale-100"
             />
