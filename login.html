@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin — Edu Wisata Bambu Mekarsari Garut</title>
+    
+    <link rel="shortcut icon" href="assets/images/logo.png" type="image/x-icon">
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config for Custom Design System -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        bamboo: {
+                            primary: '#064E36',
+                            primaryHover: '#043927',
+                            secondary: '#198754',
+                            light: '#E8F5E9',
+                            bg: '#F5F8F5',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(6, 78, 54, 0.08)',
+                        'input': '0 2px 6px rgba(6, 78, 54, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Smooth Transitions & Scrollbar */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F5F8F5;
+            overflow-x: hidden;
+        }
+
+        /* Subtle leaf pattern animation */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(1.5deg); }
+        }
+        .animate-leaf {
+            animation: floatSlow 8s ease-in-out infinite;
+        }
+
+        /* Custom Checkbox Styling */
+        .custom-checkbox:checked {
+            background-color: #064E36;
+            border-color: #064E36;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body class="min-h-screen flex items-center justify-center bg-bamboo-bg text-slate-800 antialiased selection:bg-bamboo-light selection:text-bamboo-primary">
+
+    <!-- Main Container: Full screen on Desktop, Adaptive Card/Stack on Mobile -->
+    <main class="w-full min-h-screen lg:h-screen flex flex-col lg:flex-row bg-white lg:overflow-hidden relative">
+        
+
+        <!-- =====================================================================
+             MOBILE HEADER BANNER (Visible only on Mobile & Tablet < 1024px)
+             ===================================================================== -->
+        <div class="relative w-full h-48 sm:h-56 lg:hidden overflow-hidden shrink-0">
+            <img 
+                id="login-hero-mobile"
+                src=""
+                onerror="this.src=''"
+                alt="Suasana Hutan Bambu Edu Wisata Mekarsari Garut" 
+                class="w-full h-full object-cover object-center scale-105"
+            />
+            <!-- Dark Green Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#064E36]/90 via-[#064E36]/40 to-black/20"></div>
+            
+            <!-- Subtle Bamboo Gate / Resort Badge on Mobile Banner -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pb-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-xs font-medium tracking-wide">
+                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-emerald-300"></i>
+                    Portal CMS Admin
+                </span>
+            </div>
+        </div>
+
+        <!-- =====================================================================
+             KOLOM KIRI — FORM LOGIN (45% on Desktop, Full Width on Mobile)
+             ===================================================================== -->
+        <section class="w-full lg:w-[45%] flex-1 flex flex-col justify-between bg-white relative z-20 -mt-6 lg:mt-0 rounded-t-[28px] lg:rounded-none lg:rounded-r-[36px] px-6 sm:px-12 lg:px-10 xl:px-16 py-6 sm:py-8 lg:py-6 shadow-soft lg:shadow-[12px_0_40px_rgba(6,78,54,0.08)]">
+            
+            
+            <!-- Ornamen Daun Bambu Minimalis (Pojok Kiri Atas) -->
+            <div class="hidden sm:block absolute top-0 left-0 pointer-events-none opacity-45 overflow-hidden rounded-tl-none">
+                <svg width="160" height="140" viewBox="0 0 160 140" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-leaf">
+                    <path d="M-10 10C35 12 75 38 98 78C65 65 30 48 -10 10Z" fill="#E8F5E9"/>
+                    <path d="M-15 55C22 50 58 66 82 96C50 88 18 76 -15 55Z" fill="#D1EAD4"/>
+                    <path d="M25 -10C48 22 60 58 58 95C42 62 32 28 25 -10Z" fill="#E8F5E9"/>
+                </svg>
+            </div>
+
+            <!-- Ornamen Siluet Pegunungan Halus (Bagian Bawah Mobile) -->
+            <div class="lg:hidden absolute bottom-0 inset-x-0 pointer-events-none opacity-40 overflow-hidden">
+                <svg viewBox="0 0 400 70" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 preserve-3d">
+                    <path d="M0 70V42C65 22 125 48 195 34C265 20 330 12 400 32V70H0Z" fill="#E8F5E9"/>
+                </svg>
+            </div>
+
+            <!-- Top Spacer for vertical centering balance on desktop -->
+            <div class="hidden lg:block h-2"></div>
+
+            <!-- Main Form Wrapper -->
+            <div class="w-full max-w-[400px] mx-auto relative z-10">
+                
+                <!-- Brand Logo Edu Wisata Bambu Mekarsari -->
+                <div class="flex flex-col items-center lg:items-start mb-5 sm:mb-6 lg:mb-4">
+                    <div class="flex items-center gap-3.5">
+                        <!-- Custom SVG Bamboo Emblem -->
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-bamboo-light/70 border border-bamboo-secondary/15 flex items-center justify-center shrink-0 shadow-xs">
+                            <img src="assets/images/logo.png" alt="">
+                        </div>
+                        
+                        <!-- Brand Typography -->
+                        <div class="text-left">
+                            <p class="text-[11px] sm:text-xs font-semibold tracking-wider text-bamboo-secondary uppercase leading-tight">
+                                Edu Wisata Bambu
+                            </p>
+                            <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-bamboo-primary leading-none mt-0.5">
+                                MEKARSARI
+                            </h2>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="h-[1px] w-5 bg-bamboo-secondary/40"></span>
+                                <span class="text-[10px] font-bold tracking-[0.25em] text-slate-500 uppercase">SELAAWI - GARUT</span>
+                                <span class="h-[1px] w-5 bg-bamboo-secondary/40"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Heading & Subtitle -->
+                <div class="text-center lg:text-left mb-5 sm:mb-6 lg:mb-4">
+                    <h1 class="text-2xl sm:text-[26px] font-bold text-slate-900 tracking-tight flex items-center justify-center lg:justify-start gap-2">
+                        Selamat Datang, Admin
+                        <span class="inline-block origin-bottom-right hover:rotate-12 transition-transform cursor-default" aria-hidden="true">👋</span>
+                    </h1>
+                    <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">
+                        Silakan masuk untuk mengelola website Edu Wisata Bambu Mekarsari.
+                    </p>
+                </div>
+
+                <!-- Alert Feedback Banner (Hidden by default, shown on Error / Success) -->
+                <div id="alertBox" role="alert" class="hidden mb-5 p-3.5 rounded-xl text-sm flex items-start gap-3 transition-all duration-200">
+                    <i id="alertIcon" data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                    <div class="flex-1">
+                        <p id="alertTitle" class="font-semibold text-xs uppercase tracking-wider mb-0.5"></p>
+                        <p id="alertMessage" class="text-xs sm:text-sm leading-snug"></p>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="adminLoginForm" novalidate class="space-y-3 lg:space-y-2.5">
+                    
+                    <!-- Input Username atau Email -->
+                    <div>
+                        <label for="username" class="sr-only">Username atau Email</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-bamboo-primary transition-colors">
+                                <i data-lucide="user" class="w-5 h-5 stroke-[1.8]"></i>
+                            </div>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username"
+                                autocomplete="username"
+                                placeholder="Username atau Email"
+                                class="w-full h-12 sm:h-[52px] pl-11 pr-4 bg-white border border-slate-200 rounded-xl text-sm sm:text-[15px] text-slate-800 placeholder:text-slate-400 shadow-input transition-all duration-200 focus:outline-none focus:border-bamboo-primary focus:ring-4 focus:ring-bamboo-primary/10"
+                            />
+                        </div>
+                        <p id="usernameError" class="hidden text-xs text-red-600 mt-1.5 ml-1 flex items-center gap-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                            <span>Username atau email wajib diisi.</span>
+                        </p>
+                    </div>
+
+                    <!-- Input Password + Show/Hide Toggle -->
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-bamboo-primary transition-colors">
+                                <i data-lucide="lock" class="w-5 h-5 stroke-[1.8]"></i>
+                            </div>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password"
+                                autocomplete="current-password"
+                                placeholder="Password"
+                                class="w-full h-12 sm:h-[52px] pl-11 pr-12 bg-white border border-slate-200 rounded-xl text-sm sm:text-[15px] text-slate-800 placeholder:text-slate-400 shadow-input transition-all duration-200 focus:outline-none focus:border-bamboo-primary focus:ring-4 focus:ring-bamboo-primary/10"
+                            />
+                            <button 
+                                type="button" 
+                                id="togglePasswordBtn"
+                                aria-label="Tampilkan atau sembunyikan password"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-bamboo-primary focus:outline-none transition-colors p-2"
+                            >
+                                <i id="eyeIcon" data-lucide="eye-off" class="w-5 h-5 stroke-[1.8]"></i>
+                            </button>
+                        </div>
+                        <p id="passwordError" class="hidden text-xs text-red-600 mt-1.5 ml-1 flex items-center gap-1">
+                            <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                            <span>Password minimal 6 karakter.</span>
+                        </p>
+                    </div>
+
+                    <!-- Row: Checkbox Ingat Saya & Butuh Bantuan -->
+                    <div class="flex items-center justify-between pt-0.5 pb-1">
+                        <label class="inline-flex items-center gap-2.5 cursor-pointer select-none group">
+                            <input 
+                                type="checkbox" 
+                                id="rememberMe" 
+                                name="rememberMe"
+                                class="custom-checkbox appearance-none w-4 h-4 rounded-[5px] border border-slate-300 bg-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-bamboo-primary/20"
+                            />
+                            <span class="text-xs sm:text-sm text-slate-600 group-hover:text-slate-900 transition-colors">
+                                Ingat saya
+                            </span>
+                        </label>
+
+                        <div class="flex items-center gap-3">
+                            <button 
+                                type="button" 
+                                id="forgotPasswordBtn"
+                                class="text-xs sm:text-sm font-medium text-bamboo-secondary hover:text-bamboo-primary transition-colors focus:outline-none hover:underline"
+                            >
+                                Lupa Password?
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <!-- Primary Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="submitBtn"
+                        class="w-full h-12 sm:h-[52px] bg-bamboo-primary hover:bg-bamboo-primaryHover active:scale-[0.99] text-white font-semibold text-sm sm:text-[15px] rounded-xl shadow-md shadow-bamboo-primary/20 hover:shadow-lg hover:shadow-bamboo-primary/25 transition-all duration-200 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+                    >
+                        <i id="btnIcon" data-lucide="log-in" class="w-5 h-5 stroke-[2]"></i>
+                        <svg id="btnSpinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span id="btnText">Masuk ke Dashboard</span>
+                    </button>
+                    <!-- Tombol Kembali ke Beranda -->
+<a href="./index.html"
+   class="w-full h-12 mt-3 flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+
+    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+
+    <span>Kembali ke Beranda</span>
+</a>
+                </form>
+
+                <!-- Support Text -->
+                <div class="mt-5 pt-4 lg:mt-3 lg:pt-3 border-t border-slate-100 text-center">
+                    <p class="text-xs text-slate-500 inline-flex items-center justify-center gap-1.5 leading-relaxed">
+                        <i data-lucide="headphones" class="w-4 h-4 text-bamboo-primary shrink-0"></i>
+                        <span>Hubungi administrator jika Anda mengalami kendala login.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer Copyright -->
+            <footer class="mt-6 lg:mt-2 text-center relative z-10">
+                <p class="text-[11px] sm:text-xs text-slate-400">
+                    Diinisiasi Melalui Program KKN Gradasi 2026 kelompok 09
+                </p>
+                <p class="text-[11px] sm:text-xs text-slate-400">
+                    Designed & Developed by Tedi Firdaus
+                </p>
+            </footer>
+        </section>
+
+        <!-- =====================================================================
+             KOLOM KANAN — VISUAL BRANDING (55% on Desktop, Hidden on Mobile)
+             ===================================================================== -->
+        <section class="hidden lg:flex lg:w-[55%] relative overflow-hidden bg-bamboo-primary -ml-6 pl-6 select-none">
+            
+            <!-- High-Resolution Nature & Bamboo Tourism Landscape Photo -->
+            <img
+                id="login-hero-desktop"
+                src=""
+                onerror="this.src=''"
+                alt="Hutan Bambu dan Suasana Alam Edu Wisata Bambu Mekarsari Garut" 
+                class="absolute inset-0 w-full h-full object-cover object-center transform scale-105 transition-transform duration-1000 hover:scale-100"
+            />
+
+            <!-- Multi-Layer Dark Green Overlay for High Text Readability -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-[#042f20]/95 via-[#064E36]/65 to-[#064E36]/20"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#032418]/90 via-transparent to-black/15"></div>
+
+            <!-- Top Right Subtle Location Tag -->
+            <div class="relative z-10 w-full flex flex-col justify-between p-12 xl:p-16">
+                <div class="flex justify-end">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-xs font-medium shadow-sm">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-300"></i>
+                        <span>Desa Mekarsari, Kecamatan Selaawi — Garut</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Left Tagline, Accent Line, Description & Bamboo Ornament -->
+                <div class="relative max-w-xl">
+                    <!-- Minimalist Bamboo Leaf Ornament (Bottom Right of Visual Panel) -->
+                    <div class="absolute -bottom-8 -right-24 xl:-right-36 pointer-events-none opacity-25">
+                        <svg width="240" height="220" viewBox="0 0 240 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M120 210C125 145 148 95 190 45" stroke="#A7F3D0" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M138 145C172 128 205 128 232 142C200 156 168 156 138 145Z" fill="#A7F3D0"/>
+                            <path d="M154 105C184 82 214 78 238 88C210 106 180 112 154 105Z" fill="#6EE7B7"/>
+                            <path d="M135 122C102 98 72 95 45 106C75 124 105 128 135 122Z" fill="#A7F3D0"/>
+                            <path d="M168 72C142 42 115 32 88 38C112 62 140 72 168 72Z" fill="#6EE7B7"/>
+                        </svg>
+                    </div>
+
+                    <!-- Tagline -->
+                    <h2 class="text-4xl xl:text-[44px] font-extrabold text-white leading-[1.18] tracking-tight drop-shadow-sm">
+                        Jelajahi Alam,<br>
+                        Kenali Budaya,<br>
+                        Ciptakan Pengalaman.
+                    </h2>
+
+                    <!-- Bright Green Accent Bar -->
+                    <div class="w-16 h-1.5 rounded-full bg-emerald-400 my-6 shadow-sm"></div>
+
+                    <!-- Short Description -->
+                    <p class="text-base xl:text-lg text-emerald-50/90 font-normal leading-relaxed max-w-lg">
+                        Kelola pengalaman wisata, destinasi, galeri, dan layanan Edu Wisata Bambu Mekarsari dalam satu platform.
+                    </p>
+
+                    <!-- Subtle CMS Feature Pills -->
+                    <div class="flex flex-wrap items-center gap-2.5 mt-8 pt-6 border-t border-white/15">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-xs text-emerald-100 text-xs font-medium">
+                            <i data-lucide="compass" class="w-3.5 h-3.5 text-emerald-300"></i>
+                            Manajemen Web Eduwisata
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-xs text-emerald-100 text-xs font-medium">
+                            <i data-lucide="image" class="w-3.5 h-3.5 text-emerald-300"></i>
+                            Galeri & Pesanan
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-xs text-emerald-100 text-xs font-medium">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-300"></i>
+                            Akses Terenkripsi
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    
+<!-- MODAL RESET PASSWORD -->
+<div id="resetPasswordModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+        
+        <div class="flex items-start justify-between gap-4">
+            <div class="w-11 h-11 rounded-xl bg-bamboo-light text-bamboo-primary flex items-center justify-center shrink-0">
+                <i data-lucide="mail" class="w-6 h-6"></i>
+            </div>
+
+            <button 
+                type="button"
+                id="closeResetPasswordModal"
+                aria-label="Tutup dialog"
+                class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+            >
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <h3 class="text-lg font-bold text-slate-900 mt-4">
+            Reset Password
+        </h3>
+
+        <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+            Masukkan email yang terdaftar pada akun admin. Kami akan mengirimkan link untuk mengatur ulang password Anda.
+        </p>
+
+        <!-- Alert Reset -->
+        <div id="resetPasswordAlert" class="hidden mt-4 p-3 rounded-xl text-sm"></div>
+
+        <!-- Form Email -->
+        <form id="resetPasswordForm" class="mt-5 space-y-4">
+            <div>
+                <label for="resetEmail" class="block text-sm font-medium text-slate-700 mb-1.5">
+                    Email akun admin
+                </label>
+
+                <input
+                    type="email"
+                    id="resetEmail"
+                    name="resetEmail"
+                    autocomplete="email"
+                    placeholder="admin@email.com"
+                    required
+                    class="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 shadow-input transition-all focus:outline-none focus:border-bamboo-primary focus:ring-4 focus:ring-bamboo-primary/10"
+                />
+            </div>
+
+            <button
+                type="submit"
+                id="resetPasswordSubmit"
+                class="w-full h-12 bg-bamboo-primary hover:bg-bamboo-primaryHover text-white font-semibold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+                <i data-lucide="send" class="w-4 h-4"></i>
+                <span id="resetBtnText">Kirim Link Reset</span>
+            </button>
+        </form>
+
+        <div class="mt-4 text-center">
+            <button
+                type="button"
+                id="backToLoginBtn"
+                class="text-sm text-slate-500 hover:text-bamboo-primary transition-colors"
+            >
+                Kembali ke Login
+            </button>
+        </div>
+    </div>
+</div>
+
+
+    
+
+
+<script type="module" src="assets/js/login-auth.js"></script>
+<script type="module" src="assets/js/login-images.js"></script>
+<script>
+    lucide.createIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,4421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Edu Wisata Bambu Mekarsari</title>
+    <link rel="shortcut icon" href="assets/images/logo.png" type="image/x-icon">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#064E36',   // Hijau Tua Utama
+                            medium: '#198754', // Hijau Sekunder
+                            light: '#25D366',  // Hijau Muda Aksen
+                            bg: '#F5F8F5'      // Background Section
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F5F8F5; }
+        .sidebar-active { background-color: rgba(255, 255, 255, 0.15); border-left: 4px solid #25D366; color: #FFFFFF !important; font-weight: 600; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #064E36; border-radius: 4px; }
+
+
+
+
+        /* Detail pesan masuk */
+#pesan-list details summary::-webkit-details-marker {
+    display: none;
+}
+
+#pesan-list details[open] .detail-text {
+    font-size: 0;
+}
+
+#pesan-list details[open] .detail-text::after {
+    content: "Tutup detail";
+    font-size: 12px;
+}
+
+#pesan-list details[open] .detail-icon {
+    transform: rotate(180deg);
+}
+
+#pesan-list details .detail-icon {
+    transition: transform 0.2s ease;
+}
+    </style>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+    :root {
+        --admin-green: #064e36;
+        --admin-primary: #198754;
+        --admin-hover: #146c43;
+        --admin-soft: #e8f5e9;
+        --admin-canvas: #f5f8f5;
+        --admin-ink: #1e293b;
+        --admin-muted: #64748b;
+        --admin-border: #e8eee9;
+        --admin-shadow: 0 4px 20px -2px rgba(0,0,0,.045);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: "Plus Jakarta Sans", sans-serif !important;
+        background: var(--admin-canvas) !important;
+        color: var(--admin-ink);
+        overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--admin-canvas); }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Sidebar: warna, proporsi, dan detail mengikuti dashboard referensi */
+    #sidebar {
+        width: 256px;
+        min-width: 256px;
+        min-height: 100vh;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        align-self: flex-start;
+        background: var(--admin-green) !important;
+        box-shadow: 8px 0 28px rgba(6,78,54,.08);
+        border-right: 1px solid rgba(255,255,255,.06);
+        overflow-y: auto;
+        transition: width .3s cubic-bezier(.4,0,.2,1), transform .3s ease;
+    }
+    #sidebar > div:first-child > div:first-child {
+        min-height: 80px;
+        padding: 16px 22px !important;
+        border-color: rgba(255,255,255,.10) !important;
+    }
+    #dashboard-logo {
+        border-radius: 12px;
+        padding: 2px;
+    }
+    #sidebar nav {
+        padding: 14px !important;
+        display: grid;
+        gap: 5px;
+    }
+    #sidebar .nav-item {
+        min-height: 44px;
+        padding: 11px 14px !important;
+        border-radius: 11px !important;
+        border-left: 0 !important;
+        color: rgba(236,253,245,.78) !important;
+        font-size: 13px;
+        font-weight: 600;
+        transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+    #sidebar .nav-item:hover {
+        background: rgba(255,255,255,.10) !important;
+        color: #fff !important;
+        transform: translateX(2px);
+    }
+    #sidebar .nav-item.sidebar-active {
+        background: var(--admin-primary) !important;
+        color: #fff !important;
+        border: 0 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,.12);
+        font-weight: 700;
+    }
+    #sidebar .nav-item i { flex: 0 0 auto; }
+    #sidebar > div:last-child {
+        padding: 14px !important;
+        border-color: rgba(255,255,255,.10) !important;
+    }
+    #sidebar > div:last-child button {
+        border-radius: 11px;
+        min-height: 42px;
+    }
+
+    /* Header utama */
+    main.flex-1 > header {
+        min-height: 80px;
+        padding: 14px 30px !important;
+        background: rgba(255,255,255,.96) !important;
+        border-color: #e2e8f0 !important;
+        box-shadow: 0 2px 10px rgba(15,23,42,.025) !important;
+        backdrop-filter: blur(12px);
+    }
+    #page-title {
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: -.025em;
+        color: #1e293b !important;
+    }
+    main.flex-1 > header a {
+        border-radius: 10px !important;
+        padding: 9px 13px !important;
+    }
+
+    /* Area konten dan ritme antarbagian */
+    main.flex-1 > div {
+        padding: 28px 30px !important;
+        width: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+    .tab-content { animation: adminFade .24s ease-out; }
+    @keyframes adminFade {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Banner sambutan */
+    #tab-dashboard > .bg-gradient-to-r {
+        position: relative;
+        isolation: isolate;
+        min-height: 172px;
+        padding: 28px 32px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(105deg, #064e36 0%, #08734b 100%) !important;
+        box-shadow: 0 8px 24px rgba(6,78,54,.12) !important;
+        overflow: hidden;
+    }
+    #tab-dashboard > .bg-gradient-to-r::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        width: 270px;
+        height: 270px;
+        right: 4%;
+        top: -145px;
+        border: 1px solid rgba(255,255,255,.13);
+        border-radius: 50%;
+        box-shadow: 0 0 0 28px rgba(255,255,255,.035), 0 0 0 58px rgba(255,255,255,.025);
+    }
+    #tab-dashboard > .bg-gradient-to-r h3 {
+        font-size: clamp(21px, 2.1vw, 27px);
+        font-weight: 800;
+        letter-spacing: -.035em;
+    }
+    #tab-dashboard > .bg-gradient-to-r p {
+        max-width: 700px;
+        line-height: 1.75;
+        color: rgba(236,253,245,.88) !important;
+    }
+    #tab-dashboard > .bg-gradient-to-r button {
+        background: #e8f5e9 !important;
+        color: #064e36 !important;
+        border-radius: 11px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,.10);
+    }
+
+    /* Kartu statistik dan panel konten */
+    .tab-content .bg-white {
+        border-color: var(--admin-border) !important;
+        box-shadow: var(--admin-shadow) !important;
+    }
+    #tab-dashboard > .grid > .bg-white {
+        min-height: 116px;
+        border-radius: 16px !important;
+        padding: 21px !important;
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    #tab-dashboard > .grid > .bg-white:hover {
+        transform: translateY(-3px);
+        border-color: rgba(25,135,84,.25) !important;
+        box-shadow: 0 10px 24px rgba(6,78,54,.08) !important;
+    }
+    #tab-dashboard > .grid > .bg-white h4 {
+        font-size: 27px;
+        letter-spacing: -.04em;
+    }
+    #tab-dashboard > .grid > .bg-white > div:last-child {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px !important;
+    }
+    .tab-content .rounded-2xl.bg-white,
+    .tab-content > .bg-white,
+    .tab-content .bg-white.rounded-2xl {
+        border-radius: 17px !important;
+    }
+    #tab-dashboard > .bg-white,
+    #tab-dashboard > .grid + .bg-white {
+        padding: 24px !important;
+    }
+    .tab-content h3, .tab-content h4 {
+        letter-spacing: -.02em;
+    }
+
+    /* Header section pada tab manajemen */
+    .tab-content > .flex.bg-white,
+    .tab-content > .bg-white.p-6,
+    .tab-content > .bg-white.rounded-2xl {
+        border-radius: 17px !important;
+    }
+    .tab-content button:not(#mobile-toggle) {
+        transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .tab-content button:active { transform: translateY(1px); }
+
+    /* Kontrol input, select, textarea */
+    .tab-content input:not([type="checkbox"]):not([type="radio"]),
+    .tab-content select,
+    .tab-content textarea {
+        border-color: #dbe4dd !important;
+        border-radius: 10px !important;
+        background-color: #fff;
+        color: #334155;
+        transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    .tab-content input:focus,
+    .tab-content select:focus,
+    .tab-content textarea:focus {
+        outline: none;
+        border-color: var(--admin-primary) !important;
+        box-shadow: 0 0 0 3px rgba(25,135,84,.12) !important;
+    }
+
+    /* Tabel */
+    .tab-content table { border-collapse: separate; border-spacing: 0; }
+    .tab-content table thead th {
+        background: #f7faf7;
+        color: #64748b !important;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .07em;
+        border-bottom: 1px solid #e8eee9;
+        white-space: nowrap;
+    }
+    .tab-content table tbody td {
+        border-color: #edf2ee !important;
+        color: #475569;
+        vertical-align: middle;
+    }
+    .tab-content table tbody tr:hover { background: #f8fbf8; }
+
+    /* Modal dan notifikasi */
+    body > div[id^="modal-"] > div,
+    body > div[id*="modal"] > div {
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 18px !important;
+        box-shadow: 0 24px 70px rgba(15,23,42,.18) !important;
+    }
+    #toast-container > div {
+        border-radius: 12px !important;
+        box-shadow: 0 12px 30px rgba(15,23,42,.14);
+    }
+
+    /* ================= MOBILE RESPONSIVE ================= */
+@media (max-width: 767px) {
+
+    /* Body tidak lagi menempatkan sidebar di layout normal */
+    body {
+        display: block;
+    }
+
+    /* Sidebar menjadi drawer fixed dari kiri */
+    #sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+
+        width: 280px !important;
+        max-width: 85vw !important;
+        min-width: 0 !important;
+
+        height: 100vh !important;
+        min-height: 100vh !important;
+
+        align-self: auto !important;
+        z-index: 50;
+
+        box-shadow: 8px 0 28px rgba(6,78,54,.15);
+    }
+
+    /* Header sidebar */
+    #sidebar > div:first-child > div:first-child {
+        padding: 13px 18px !important;
+    }
+
+    /* Profil admin */
+    #sidebar > div:first-child > div:nth-child(2) {
+        padding: 12px 18px !important;
+    }
+
+    /* Navigasi sidebar kembali vertikal */
+    #sidebar nav {
+        display: grid;
+        grid-template-columns: 1fr !important;
+        gap: 5px;
+        padding: 12px !important;
+    }
+
+    #sidebar .nav-item {
+        min-height: 42px;
+        padding: 10px 12px !important;
+        font-size: 12px;
+        gap: 9px;
+    }
+
+    /* Tombol logout */
+    #sidebar > div:last-child {
+        padding: 12px !important;
+    }
+
+    /* Header utama */
+    main.flex-1 > header {
+        min-height: 66px;
+        padding: 10px 12px !important;
+        width: 100%;
+    }
+
+    /* Judul halaman */
+    #page-title {
+        font-size: 14px !important;
+    }
+
+    /* Tombol preview lebih compact */
+    main.flex-1 > header a {
+        padding: 8px 9px !important;
+    }
+
+    /* Konten utama */
+    main.flex-1 > div {
+        padding: 18px 14px !important;
+        width: 100%;
+    }
+
+    /* Dashboard */
+    #tab-dashboard > .bg-gradient-to-r {
+        padding: 22px !important;
+    }
+
+    #tab-dashboard > .grid > .bg-white {
+        padding: 17px !important;
+    }
+
+    #tab-dashboard > .bg-white,
+    #tab-dashboard > .grid + .bg-white {
+        padding: 18px !important;
+    }
+}
+    @media (min-width: 768px) and (max-width: 1023px) {
+        #sidebar { width: 230px; min-width: 230px; }
+        main.flex-1 > header { padding-left: 22px !important; padding-right: 22px !important; }
+        main.flex-1 > div { padding: 22px !important; }
+    }
+</style>
+
+</head>
+<body class="bg-[#F5F8F5] text-gray-800 antialiased min-h-screen md:flex md:flex-row">
+    <!-- AUTH GUARD: Memeriksa sesi login -->
+<div id="authGuard"
+     class="fixed inset-0 z-[99999] flex items-center justify-center bg-white">
+
+    <div class="text-center px-6">
+
+        <!-- Loading Spinner -->
+        <div class="w-10 h-10 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin mx-auto mb-5"></div>
+
+        <!-- Loading Text -->
+        <h2 class="text-lg font-semibold text-gray-800 mb-1">
+            Memeriksa Login
+        </h2>
+
+        <p class="text-sm text-gray-500">
+            Mohon tunggu sebentar...
+        </p>
+
+    </div>
+
+</div>
+
+    <!-- Firebase Auth dari konfigurasi terpusat -->
+<script type="module" src="assets/js/admin-auth.js"></script>
+
+
+
+    <!-- MOBILE SIDEBAR OVERLAY -->
+<div
+    id="sidebar-overlay"
+    class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"
+></div>
+
+    <!-- SIDEBAR -->
+    <aside
+        id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-[280px] max-w-[85vw]
+        bg-[#064E36] text-white flex flex-col justify-between
+        min-h-screen overflow-y-auto transform -translate-x-full
+        transition-transform duration-300 ease-in-out
+        md:translate-x-0 md:static md:w-64 md:max-w-none md:min-h-screen md:flex-shrink-0"
+    >
+        <div>
+            <!-- Header Sidebar & Logo -->
+            <div class="p-5 flex items-center justify-between border-b border-emerald-800/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-400/40 text-emerald-300 overflow-hidden">
+                        <img
+                            id="dashboard-logo"
+                            src="assets/images/logo.png"
+                            alt="Logo Edu Wisata Bambu Mekarsari"
+                            class="w-full h-full object-contain"
+                        >
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-sm tracking-wide text-white leading-tight">Edu Wisata Bambu</h1>
+                        <span class="text-xs text-emerald-300 font-semibold tracking-wider">MEKARSARI GARUT</span>
+                    </div>
+                </div>
+                <button
+                    id="sidebar-close"
+                    class="md:hidden w-9 h-9 rounded-lg flex items-center justify-center
+                    text-emerald-200 hover:bg-emerald-800 hover:text-white transition"
+                    aria-label="Tutup menu"
+                >
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Profile Admin -->
+<div class="p-5 flex items-center gap-3 border-b border-emerald-800/40 bg-emerald-950/20">
+
+    <!-- Foto Profil -->
+    <div class="w-11 h-11 rounded-full border-2 border-emerald-400 bg-emerald-700 flex items-center justify-center overflow-hidden flex-shrink-0">
+        <span id="admin-avatar-fallback" class="text-white text-sm font-bold">
+            A
+        </span>
+
+        <img
+            id="admin-photo"
+            src=""
+            alt="Foto Profil Admin"
+            class="hidden w-full h-full object-cover"
+        >
+    </div>
+
+    <!-- Informasi Admin -->
+    <div class="overflow-hidden min-w-0">
+
+        <h2
+            id="admin-name"
+            class="font-semibold text-sm text-white truncate"
+        >
+            Admin Pengelola
+        </h2>
+
+        <p
+            id="admin-email"
+            class="text-xs text-emerald-200/80 truncate"
+        >
+            Memuat akun...
+        </p>
+
+        <span
+            id="admin-role"
+            class="inline-block px-2 py-0.5 mt-1 text-[10px] bg-emerald-700/60 text-emerald-200 rounded-full"
+        >
+            Administrator
+        </span>
+
+    </div>
+</div>
+
+            <!-- Navigation Links -->
+            <nav class="p-3 space-y-1 text-sm font-medium">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100 hover:bg-emerald-800/50 transition sidebar-active">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('paket')" id="nav-paket" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100 hover:bg-emerald-800/50 transition">
+                    <i data-lucide="package" class="w-5 h-5"></i>
+                    <span>Paket Wisata</span>
+                </button>
+                <button onclick="switchTab('pemesanan')" id="nav-pemesanan" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100 hover:bg-emerald-800/50 transition">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <span>Pemesanan</span>
+                    <span id="badge-pending" class="ml-auto bg-amber-500 text-amber-950 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+                <button onclick="switchTab('galeri')" id="nav-galeri" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100 hover:bg-emerald-800/50 transition">
+                    <i data-lucide="image" class="w-5 h-5"></i>
+                    <span>Galeri</span>
+                </button>
+
+
+                <!-- MENU MANAJEMEN GAMBAR WEBSITE -->
+                <button onclick="switchTab('gambar')" id="nav-gambar" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100 hover:bg-emerald-800/50 transition">
+                    <i data-lucide="images" class="w-5 h-5"></i>
+                    <span>Gambar Website</span>
+                </button>
+
+                <!-- MENU PESAN MASUK -->
+                <button onclick="switchTab('pesan')" id="nav-pesan" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100 hover:bg-emerald-800/50 transition">
+                    <i data-lucide="inbox" class="w-5 h-5"></i>
+                    <span>Pesan Masuk</span>
+                    <span id="badge-pesan" class="hidden ml-auto bg-rose-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+
+                <!-- MENU MANAJEMEN ADMIN -->
+                <button
+                    onclick="switchTab('admin')"
+                    id="nav-admin"
+                    class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100 hover:bg-emerald-800/50 transition"
+                >
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span>Manajemen Admin</span>
+                </button>
+
+                <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100 hover:bg-emerald-800/50 transition">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>Pengaturan Desa</span>
+                </button>
+        
+            </nav>
+        </div>
+
+        <!-- Logout Button -->
+        <div class="p-4 border-t border-emerald-800/40">
+            <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-rose-200 hover:bg-rose-900/40 hover:text-rose-100 transition text-sm font-medium">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>Keluar (Logout)</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="w-full flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+        <!-- Top Header Bar -->
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-30 px-3 sm:px-5 py-3 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-2.5 min-w-0">
+
+                <!-- MOBILE MENU BUTTON -->
+                <button
+                    id="mobile-toggle"
+                    class="md:hidden w-10 h-10 flex-shrink-0 rounded-xl
+                    bg-[#064E36] text-white flex items-center justify-center
+                    hover:bg-emerald-800 transition"
+                    aria-label="Buka menu navigasi"
+                >
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+
+                <!-- PAGE TITLE -->
+                <h2
+                    id="page-title"
+                    class="text-base sm:text-xl font-bold text-gray-800 truncate"
+                >
+                    Dashboard Overview
+                </h2>
+
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <div id="current-date" class="text-xs font-semibold text-gray-500"></div>
+                    <div class="text-xs text-brand-dark font-medium">Desa Mekarsari, Selaawi, Garut</div>
+                </div>
+                <a href="index.html" target="_blank" title="Lihat Website Publik" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-brand-dark hover:bg-emerald-100 rounded-lg text-xs font-semibold border border-emerald-200 transition">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Pratinjau Situs</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Body -->
+        <div class="p-4 md:p-8 space-y-6 flex-1">
+
+            <!-- TOAST NOTIFICATION CONTAINER -->
+            <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+            <!-- ================= TAB 1: DASHBOARD OVERVIEW ================= -->
+            <div id="tab-dashboard" class="tab-content space-y-6">
+
+                <!-- Welcome Greeting banner -->
+                <div class="bg-gradient-to-r from-[#064E36] to-emerald-800 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-emerald-500/30 text-emerald-200 rounded-full text-xs font-semibold mb-2">Panel Kontrol Pengelola</span>
+                        <h3 class="text-2xl font-bold">Selamat Datang kembali, Admin Mekarsari!</h3>
+                        <p class="text-emerald-100 text-sm mt-1">Pantau kunjungan edukasi bambu, pemesanan tiket, serta pembaruan berita Desa Selaawi hari ini.</p>
+                    </div>
+                    <button onclick="switchTab('pemesanan')" class="px-5 py-2.5 bg-brand-light text-emerald-950 font-bold rounded-xl text-sm shadow hover:bg-emerald-300 transition whitespace-nowrap">
+                        Kelola Pemesanan Barumu
+                    </button>
+                </div>
+
+                <!-- 4 Cards Statistics -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <!-- Total Paket -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500">Total Paket Wisata</p>
+                            <h4 id="stat-paket" class="text-2xl font-extrabold text-gray-800 mt-1">0</h4>
+                            <span class="text-[11px] text-emerald-6 Aktif">Paket Edukasi Ready</span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-brand-dark flex items-center justify-center">
+                            <i data-lucide="package" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <!-- Total Pemesanan -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500">Total Pemesanan</p>
+                            <h4 id="stat-pemesanan" class="text-2xl font-extrabold text-gray-800 mt-1">0</h4>
+                            <span class="text-[11px] text-emerald-6 font-semibold">Pesanan Pengunjung</span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <!-- Menunggu Konfirmasi -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500">Menunggu Konfirmasi</p>
+                            <h4 id="stat-pending" class="text-2xl font-extrabold text-amber-600 mt-1">0</h4>
+                            <span class="text-[11px] text-amber-600 font-semibold">Perlu Tindakan</span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                            <i data-lucide="clock" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <!-- TOTAL PESAN MASUK -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500">Total Pesan Masuk</p>
+                            <h4 id="dashboard-total-pesan" class="text-2xl font-extrabold text-blue-600 mt-1">0</h4>
+                            <span class="text-[11px] text-blue-600 font-semibold">Pesan Pengunjung</span>
+                        </div>
+
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <i data-lucide="inbox" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafik Statistik Pemesanan (Chart.js) -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div>
+                            <h4 class="font-bold text-gray-800 text-lg">Statistik Pemesanan Paket Wisata</h4>
+                            <p class="text-xs text-gray-500">Jumlah pengunjung dan reservasi eduwisata bambu 2026</p>
+                        </div>
+                        <span class="text-xs bg-emerald-50 text-brand-dark px-3 py-1 rounded-full font-semibold border border-emerald-200">
+                            Grafik Real-time
+                        </span>
+                    </div>
+                    <div class="w-full h-72">
+                        <canvas id="chartPemesanan"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pemesanan Terbaru (Tabel) -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <h4 class="font-bold text-gray-800 text-lg">Pemesanan Terbaru</h4>
+                        <button onclick="switchTab('pemesanan')" class="text-xs text-brand-dark font-bold hover:underline flex items-center gap-1">
+                            <span>Lihat Semua Pemesanan</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-600">
+                            <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
+                                <tr>
+                                    <th class="py-3 px-4">ID Pemesanan</th>
+                                    <th class="py-3 px-4">Nama Pemesan</th>
+                                    <th class="py-3 px-4">Paket Wisata</th>
+                                    <th class="py-3 px-4">Tanggal Kunjungan</th>
+                                    <th class="py-3 px-4">Status</th>
+                                    <th class="py-3 px-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-bookings-tbody" class="divide-y divide-gray-100">
+                                <!-- Render via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ================= TAB 2: PAKET WISATA ================= -->
+            <div id="tab-paket" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Manajemen Paket Wisata Bambu</h3>
+                        <p class="text-xs text-gray-500">Kelola informasi paket kriya bambu, seni Sunda, & eduwisata alam Desa Mekarsari</p>
+                    </div>
+                    <button onclick="openModalPaket()" class="px-4 py-2.5 bg-[#064E36] hover:bg-emerald-800 text-white font-medium rounded-xl text-sm flex items-center gap-2 shadow transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Tambah Paket Baru</span>
+                    </button>
+                </div>
+
+                <!-- Grid Data Paket -->
+                <div id="paket-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic Items loaded here -->
+                </div>
+            </div>
+
+            <!-- ================= TAB 3: PEMESANAN ================= -->
+            <div id="tab-pemesanan" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">Daftar Pemesanan Edu Wisata</h3>
+                            <p class="text-xs text-gray-500">Verifikasi dan kelola transaksi booking wisatawan</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select id="filter-booking-status" onchange="renderBookingsTable()" class="text-xs border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-dark">
+                                <option value="Semua">Semua Status</option>
+                                <option value="Menunggu">Menunggu</option>
+                                <option value="Dikonfirmasi">Dikonfirmasi</option>
+                                <option value="Selesai">Selesai</option>
+                                <option value="Dibatalkan">Dibatalkan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-600">
+                            <thead class="text-xs text-gray-700 uppercase bg-emerald-50/50 border-b border-emerald-100">
+                                <tr>
+                                    <th class="py-3 px-4">ID Booking</th>
+                                    <th class="py-3 px-4">Pemesan</th>
+                                    <th class="py-3 px-4">Kontak / Email</th>
+                                    <th class="py-3 px-4">Paket</th>
+                                    <th class="py-3 px-4">Peserta</th>
+                                    <th class="py-3 px-4">Tgl Kunjungan</th>
+                                    <th class="py-3 px-4">Status</th>
+                                    <th class="py-3 px-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookings-tbody" class="divide-y divide-gray-100">
+                                <!-- Render JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= TAB 4: GALERI ================= -->
+            <div id="tab-galeri" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Galeri Foto Edu Wisata Mekarsari</h3>
+                        <p class="text-xs text-gray-500">Dokumentasi pembuatan kerajinan bambu, kesenian, dan pemandangan Selaawi</p>
+                    </div>
+                    <button onclick="openModalGaleri()" class="px-4 py-2.5 bg-[#064E36] hover:bg-emerald-800 text-white font-medium rounded-xl text-sm flex items-center gap-2 shadow transition">
+                        <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                        <span>Tambah Foto Baru</span>
+                    </button>
+                </div>
+
+                <div id="galeri-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <!-- Gallery Items -->
+                </div>
+            </div>
+
+
+            <!-- ================= TAB: GAMBAR WEBSITE ================= -->
+<div id="tab-gambar" class="tab-content hidden space-y-4">
+
+    <!-- HEADER -->
+    <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#064E36] flex items-center justify-center flex-shrink-0">
+                <i data-lucide="images" class="w-5 h-5"></i>
+            </div>
+
+            <div>
+                <h3 class="text-base font-bold text-gray-800">
+                    Manajemen Gambar Website
+                </h3>
+                <p class="text-xs text-gray-500">
+                    Kelola gambar utama halaman publik Edu Wisata Bambu Mekarsari.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFORMASI -->
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 flex gap-2.5 items-start">
+        <i data-lucide="info" class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5"></i>
+        <p class="text-xs text-blue-800 leading-relaxed">
+            Gambar yang diubah di sini otomatis diperbarui pada website publik.
+            Galeri foto dan gambar paket wisata dikelola melalui menu masing-masing.
+        </p>
+    </div>
+
+
+
+    <!-- ================= GAMBAR BERANDA ================= -->
+    <div>
+        <div class="mb-3">
+            <h3 class="text-sm font-bold text-gray-800">Halaman Beranda</h3>
+            <p class="text-xs text-gray-500">Banner utama dan gambar pengenalan beranda.</p>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+
+            <!-- HERO BERANDA -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-800">Banner Utama Beranda</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Gambar hero halaman beranda.</p>
+                </div>
+
+                <div class="p-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <!-- PREVIEW -->
+                        <div class="relative w-full sm:w-40 flex-shrink-0">
+                            <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-video sm:aspect-[4/3]">
+                                <img
+                                    id="preview-hero-beranda"
+                                    src="assets/images/hero-beranda.webp"
+                                    alt="Preview banner beranda"
+                                    class="w-full h-full object-cover"
+                                >
+
+                                <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                    Preview Banner
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORM -->
+                        <div class="flex-1 min-w-0 space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                    URL Google Drive Banner
+                                </label>
+
+                                <input
+                                    type="url"
+                                    id="url-hero-beranda"
+                                    placeholder="https://drive.google.com/file/d/..."
+                                    class="w-full text-xs border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                >
+
+                                <p class="text-[10px] text-gray-400 mt-1.5">
+                                    Pastikan akses Google Drive Anyone with the link.
+                                </p>
+                            </div>
+
+                            <button
+                                id="btn-save-hero-beranda"
+                                onclick="saveManagedImage('hero_beranda')"
+                                class="w-full px-3 py-2.5 bg-[#064E36] hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                Simpan Banner Beranda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ABOUT BERANDA -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-800">Gambar Tentang Beranda</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Gambar section pengenalan beranda.</p>
+                </div>
+
+                <div class="p-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <!-- PREVIEW -->
+                        <div class="relative w-full sm:w-40 flex-shrink-0">
+                            <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-video sm:aspect-[4/3]">
+                                <img
+                                    id="preview-about-beranda"
+                                    src="assets/images/beranda1.webp"
+                                    alt="Preview gambar tentang beranda"
+                                    class="w-full h-full object-cover"
+                                >
+
+                                <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                    Preview
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORM -->
+                        <div class="flex-1 min-w-0 space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                    URL Google Drive Gambar
+                                </label>
+
+                                <input
+                                    type="url"
+                                    id="url-about-beranda"
+                                    placeholder="https://drive.google.com/file/d/..."
+                                    class="w-full text-xs border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                >
+
+                                <p class="text-[10px] text-gray-400 mt-1.5">
+                                    Pastikan akses Google Drive Anyone with the link.
+                                </p>
+                            </div>
+
+                            <button
+                                id="btn-save-about-beranda"
+                                onclick="saveManagedImage('about_beranda')"
+                                class="w-full px-3 py-2.5 bg-[#064E36] hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                Simpan Gambar Tentang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= HALAMAN TENTANG ================= -->
+    <div>
+        <div class="mb-3">
+            <h3 class="text-sm font-bold text-gray-800">Halaman Tentang</h3>
+            <p class="text-xs text-gray-500">
+                Kelola gambar banner, pengenalan, dan potensi wisata.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+
+            <!-- HERO TENTANG -->
+            
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-800">Banner Utama Tentang</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Gambar hero halaman beranda</p>
+                </div>
+                <div class="p-4">
+                <div class="flex flex-col sm:flex-row gap-4">
+
+                    <!-- PREVIEW -->
+                    <div class="relative w-full sm:w-40 flex-shrink-0">
+                        <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-video sm:aspect-[4/3]">
+                            <img
+                                id="preview-hero-tentang"
+                                src="assets/images/hero-tentang.webp"
+                                alt="Preview Hero Banner Tentang"
+                                class="w-full h-full object-cover"
+                            >
+
+                            <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                Preview Banner
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM -->
+                    <div class="flex-1 min-w-0 space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                URL Google Drive
+                            </label>
+
+                            <input
+                                type="url"
+                                id="url-hero-tentang"
+                                placeholder="Masukkan link Google Drive gambar"
+                                class="w-full text-xs border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            >
+
+                            <p class="text-[10px] text-gray-400 mt-1.5">
+                                Pastikan akses Google Drive Anyone with the link.
+                            </p>
+                        </div>
+
+                        <button
+                            id="btn-save-hero-tentang"
+                            onclick="saveManagedImage('hero_tentang')"
+                            class="w-full bg-[#064E36] hover:bg-emerald-800 text-white py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2"
+                        >
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            Simpan Gambar
+                        </button>
+                    </div>
+                </div>    
+                </div>
+            </div>
+
+
+
+            <!-- ABOUT TENTANG -->
+            
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-800">Gambar kedua Tentang</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Gambar kedua halaman tentang</p>
+                </div>
+                <div class="p-4">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    
+                    <!-- PREVIEW -->
+                    <div class="relative w-full sm:w-40 flex-shrink-0">
+                        <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-video sm:aspect-[4/3]">
+                            <img
+                                id="preview-about-tentang"
+                                src="assets/images/tentang1.webp"
+                                alt="Preview Gambar Pengenalan"
+                                class="w-full h-full object-cover"
+                            >
+
+                            <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                Preview
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM -->
+                    <div class="flex-1 min-w-0 space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                URL Google Drive Gambar
+                            </label>
+
+                            <input
+                                type="url"
+                                id="url-about-tentang"
+                                placeholder="Masukkan link Google Drive gambar"
+                                class="w-full text-xs border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            >
+
+                            <p class="text-[10px] text-gray-400 mt-1.5">
+                                Pastikan akses Google Drive Anyone with the link.
+                            </p>
+                        </div>
+
+                        <button
+                            id="btn-save-about-tentang"
+                            onclick="saveManagedImage('about_tentang')"
+                            class="w-full bg-[#064E36] hover:bg-emerald-800 text-white py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2"
+                        >
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            Simpan Gambar Tentang
+                        </button>
+                    </div>
+                </div> 
+                </div>
+            </div>
+
+
+
+            <!-- POTENSI KERAJINAN -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-800">Potensi Kerajinan Bambu</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Foto kerajinan bambu.</p>
+                </div>
+
+                <div class="p-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+
+                        <!-- PREVIEW -->
+                        <div class="relative w-full sm:w-40 flex-shrink-0">
+                            <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-video sm:aspect-[4/3]">
+                                <img
+                                    id="preview-potensi-kerajinan"
+                                    src="assets/images/potensi1.webp"
+                                    class="w-full h-full object-cover"
+                                    alt="Preview Kerajinan Bambu"
+                                >
+                                <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                    Preview
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORM -->
+                        <div class="flex-1 min-w-0 space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                    URL Google Drive
+                                </label>
+
+                                <input
+                                    type="url"
+                                    id="url-potensi-kerajinan"
+                                    placeholder="Masukkan link Google Drive gambar"
+                                    class="w-full px-3 py-2.5 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                >
+
+                                <p class="text-[10px] text-gray-400 mt-1.5">
+                                    Pastikan akses Google Drive Anyone with the link.
+                                </p>
+                            </div>
+
+                            <button
+                                id="btn-save-potensi-kerajinan"
+                                onclick="saveManagedImage('potensi_kerajinan')"
+                                class="w-full bg-[#064E36] hover:bg-emerald-800 text-white py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                Simpan Gambar
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- POTENSI BUDAYA -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-800">Potensi Budaya Sunda</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Foto kegiatan atau potensi budaya Sunda.</p>
+                </div>
+
+                <div class="p-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+
+                        <!-- PREVIEW -->
+                        <div class="relative w-full sm:w-40 flex-shrink-0">
+                            <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-video sm:aspect-[4/3]">
+                                <img
+                                    id="preview-potensi-budaya"
+                                    src="assets/images/potensi2.webp"
+                                    class="w-full h-full object-cover"
+                                    alt="Preview Budaya Sunda"
+                                >
+                                <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                    Preview
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORM -->
+                        <div class="flex-1 min-w-0 space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                    URL Google Drive
+                                </label>
+
+                                <input
+                                    type="url"
+                                    id="url-potensi-budaya"
+                                    placeholder="Masukkan link Google Drive gambar"
+                                    class="w-full px-3 py-2.5 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                >
+
+                                <p class="text-[10px] text-gray-400 mt-1.5">
+                                    Pastikan akses Google Drive Anyone with the link.
+                                </p>
+                            </div>
+
+                            <button
+                                id="btn-save-potensi-budaya"
+                                onclick="saveManagedImage('potensi_budaya')"
+                                class="w-full bg-[#064E36] hover:bg-emerald-800 text-white py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                Simpan Gambar
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- POTENSI ALAM -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-800">Potensi Wisata Alam</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Foto potensi wisata alam Desa Mekarsari.</p>
+                </div>
+
+                <div class="p-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+
+                        <!-- PREVIEW -->
+                        <div class="relative w-full sm:w-40 flex-shrink-0">
+                            <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-video sm:aspect-[4/3]">
+                                <img
+                                    id="preview-potensi-alam"
+                                    src="assets/images/potensi3.webp"
+                                    class="w-full h-full object-cover"
+                                    alt="Preview Wisata Alam"
+                                >
+                                <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                    Preview
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORM -->
+                        <div class="flex-1 min-w-0 space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                    URL Google Drive
+                                </label>
+
+                                <input
+                                    type="url"
+                                    id="url-potensi-alam"
+                                    placeholder="Masukkan link Google Drive gambar"
+                                    class="w-full px-3 py-2.5 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                >
+
+                                <p class="text-[10px] text-gray-400 mt-1.5">
+                                    Pastikan akses Google Drive Anyone with the link.
+                                </p>
+                            </div>
+
+                            <button
+                                id="btn-save-potensi-alam"
+                                onclick="saveManagedImage('potensi_alam')"
+                                class="w-full bg-[#064E36] hover:bg-emerald-800 text-white py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                Simpan Gambar
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- POTENSI KULINER -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-800">Potensi Kuliner Tradisional</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Foto kuliner tradisional.</p>
+                </div>
+
+                <div class="p-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+
+                        <!-- PREVIEW -->
+                        <div class="relative w-full sm:w-40 flex-shrink-0">
+                            <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-video sm:aspect-[4/3]">
+                                <img
+                                    id="preview-potensi-kuliner"
+                                    src="assets/images/potensi4.webp"
+                                    class="w-full h-full object-cover"
+                                    alt="Preview Kuliner Tradisional"
+                                >
+                                <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                    Preview
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORM -->
+                        <div class="flex-1 min-w-0 space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                    URL Google Drive
+                                </label>
+
+                                <input
+                                    type="url"
+                                    id="url-potensi-kuliner"
+                                    placeholder="Masukkan link Google Drive gambar"
+                                    class="w-full px-3 py-2.5 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                >
+
+                                <p class="text-[10px] text-gray-400 mt-1.5">
+                                    Pastikan akses Google Drive Anyone with the link.
+                                </p>
+                            </div>
+
+                            <button
+                                id="btn-save-potensi-kuliner"
+                                onclick="saveManagedImage('potensi_kuliner')"
+                                class="w-full bg-[#064E36] hover:bg-emerald-800 text-white py-2.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                Simpan Gambar
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+<!-- ================= BANNER HALAMAN WEBSITE ================= -->
+<div class="col-span-full w-full min-w-0">
+
+    <div class="mb-3">
+        <h3 class="text-sm font-bold text-gray-800">
+            Banner Halaman Website
+        </h3>
+        <p class="text-xs text-gray-500">
+            Kelola banner halaman Paket, Galeri, Kontak, dan Login Admin.
+        </p>
+    </div>
+
+    <!-- GRID BANNER WEBSITE -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 w-full">
+
+        <!-- BANNER HALAMAN PAKET -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden min-w-0">
+
+            <div class="px-3 py-2.5 border-b border-gray-100">
+                <h4 class="text-sm font-bold text-gray-800">
+                    Banner Halaman Paket
+                </h4>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    Background halaman Paket Wisata.
+                </p>
+            </div>
+
+            <div class="p-3">
+                <div class="flex flex-col sm:flex-row gap-3">
+
+                    <!-- PREVIEW -->
+                    <div class="w-full sm:w-32 flex-shrink-0">
+                        <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-[4/3]">
+                            <img
+                                id="preview-hero-paket"
+                                src="assets/images/hero-paket.webp"
+                                alt="Preview banner halaman paket"
+                                class="w-full h-full object-cover"
+                            >
+
+                            <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                Preview Banner
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM -->
+                    <div class="flex-1 min-w-0 flex flex-col gap-2">
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                URL Google Drive
+                            </label>
+
+                            <input
+                                type="url"
+                                id="url-hero-paket"
+                                placeholder="https://drive.google.com/file/d/..."
+                                class="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            >
+
+                            <p class="text-[10px] text-gray-400 mt-1.5">
+                                Pastikan akses Google Drive Anyone with the link.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            id="btn-save-hero-paket"
+                            onclick="saveManagedImage('hero_paket')"
+                            class="w-full px-3 py-2 bg-[#064E36] hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2"
+                        >
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            Simpan Banner Paket
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- BANNER HALAMAN GALERI -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden min-w-0">
+
+            <div class="px-3 py-2.5 border-b border-gray-100">
+                <h4 class="text-sm font-bold text-gray-800">
+                    Banner Halaman Galeri
+                </h4>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    Background halaman Galeri.
+                </p>
+            </div>
+
+            <div class="p-3">
+                <div class="flex flex-col sm:flex-row gap-3">
+
+                    <!-- PREVIEW -->
+                    <div class="w-full sm:w-32 flex-shrink-0">
+                        <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-[4/3]">
+                            <img
+                                id="preview-hero-galeri"
+                                src="assets/images/hero-galeri.webp"
+                                alt="Preview banner halaman galeri"
+                                class="w-full h-full object-cover"
+                            >
+
+                            <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                Preview Banner
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM -->
+                    <div class="flex-1 min-w-0 flex flex-col gap-2">
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                URL Google Drive
+                            </label>
+
+                            <input
+                                type="url"
+                                id="url-hero-galeri"
+                                placeholder="https://drive.google.com/file/d/..."
+                                class="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            >
+
+                            <p class="text-[10px] text-gray-400 mt-1.5">
+                                Pastikan akses Google Drive Anyone with the link.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            id="btn-save-hero-galeri"
+                            onclick="saveManagedImage('hero_galeri')"
+                            class="w-full px-3 py-2 bg-[#064E36] hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2"
+                        >
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            Simpan Banner Galeri
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- BANNER HALAMAN KONTAK -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden min-w-0">
+
+            <div class="px-3 py-2.5 border-b border-gray-100">
+                <h4 class="text-sm font-bold text-gray-800">
+                    Banner Halaman Kontak
+                </h4>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    Background halaman Kontak & Lokasi.
+                </p>
+            </div>
+
+            <div class="p-3">
+                <div class="flex flex-col sm:flex-row gap-3">
+
+                    <!-- PREVIEW -->
+                    <div class="w-full sm:w-32 flex-shrink-0">
+                        <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-[4/3]">
+                            <img
+                                id="preview-hero-kontak"
+                                src="assets/images/hero-kontak.webp"
+                                alt="Preview banner halaman kontak"
+                                class="w-full h-full object-cover"
+                            >
+
+                            <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                Preview Banner
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM -->
+                    <div class="flex-1 min-w-0 flex flex-col gap-2">
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                URL Google Drive
+                            </label>
+
+                            <input
+                                type="url"
+                                id="url-hero-kontak"
+                                placeholder="https://drive.google.com/file/d/..."
+                                class="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            >
+
+                            <p class="text-[10px] text-gray-400 mt-1.5">
+                                Pastikan akses Google Drive Anyone with the link.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            id="btn-save-hero-kontak"
+                            onclick="saveManagedImage('hero_kontak')"
+                            class="w-full px-3 py-2 bg-[#064E36] hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2"
+                        >
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            Simpan Banner Kontak
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- BANNER LOGIN ADMIN -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden min-w-0">
+
+            <div class="px-3 py-2.5 border-b border-gray-100">
+                <h4 class="text-sm font-bold text-gray-800">
+                    Banner Login Admin
+                </h4>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    Gambar banner mobile dan panel visual desktop login.
+                </p>
+            </div>
+
+            <div class="p-3">
+                <div class="flex flex-col sm:flex-row gap-3">
+
+                    <!-- PREVIEW -->
+                    <div class="w-full sm:w-32 flex-shrink-0">
+                        <div class="relative rounded-lg overflow-hidden bg-gray-100 aspect-[4/3]">
+                            <img
+                                id="preview-hero-login"
+                                src="assets/images/hero-beranda.webp"
+                                alt="Preview banner login admin"
+                                class="w-full h-full object-cover"
+                            >
+
+                            <div class="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md">
+                                Preview Login
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM -->
+                    <div class="flex-1 min-w-0 flex flex-col gap-2">
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                URL Google Drive Banner Login
+                            </label>
+
+                            <input
+                                type="url"
+                                id="url-hero-login"
+                                placeholder="https://drive.google.com/file/d/..."
+                                class="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            >
+
+                            <p class="text-[10px] text-gray-400 mt-1.5">
+                                Gambar digunakan pada banner mobile dan panel desktop halaman login. Pastikan akses Google Drive Anyone with the link.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            id="btn-save-hero-login"
+                            onclick="saveManagedImage('hero_login')"
+                            class="w-full px-3 py-2 bg-[#064E36] hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2"
+                        >
+                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                            Simpan Banner Login
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+                        <!-- ================= TAB 5: PESAN MASUK ================= -->
+            <div id="tab-pesan" class="tab-content hidden space-y-6">
+
+                <!-- HEADER -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Pesan Masuk</h3>
+                        <p class="text-xs text-gray-500">
+                            Kelola pesan dan pertanyaan dari pengunjung website Edu Wisata Bambu Mekarsari
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium">
+                        <i data-lucide="inbox" class="w-4 h-4"></i>
+                        <span id="pesan-total">0 Pesan</span>
+                    </div>
+                </div>
+
+                <!-- FILTER -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterPesan('semua')"
+                        class="filter-pesan-btn px-4 py-2 rounded-xl text-sm font-medium bg-[#064E36] text-white hover:bg-green-50 hover:text-[#064E36] hover:border-green-200">
+                        Semua
+                    </button>
+
+                    <button onclick="filterPesan('Belum Dibaca')"
+                        class="filter-pesan-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:bg-green-50 hover:text-[#064E36] hover:border-green-200">
+                        Belum Dibaca
+                    </button>
+
+                    <button onclick="filterPesan('Sudah Dibaca')"
+                        class="filter-pesan-btn px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:bg-green-50 hover:text-[#064E36] hover:border-green-200">
+                        Sudah Dibaca
+                    </button>
+                </div>
+
+                <!-- LIST PESAN -->
+                <div id="pesan-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                    <!-- Pesan akan dimuat dari Firestore -->
+
+                </div>
+
+                <!-- EMPTY STATE -->
+                <div id="pesan-empty" class="hidden bg-white border border-gray-100 rounded-2xl p-10 text-center shadow-sm">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <i data-lucide="mail-open" class="w-7 h-7 text-gray-400"></i>
+                    </div>
+
+                    <h4 class="font-bold text-gray-800 mb-2">Belum Ada Pesan</h4>
+
+                    <p class="text-sm text-gray-500">
+                        Pesan dari pengunjung website akan muncul di sini.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- ================= TAB: MANAJEMEN ADMIN ================= -->
+            <div id="tab-admin" class="tab-content hidden space-y-6">
+
+                <!-- HEADER -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">
+                            Manajemen Admin
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Kelola akun administrator website Edu Wisata Bambu Mekarsari.
+                        </p>
+                    </div>
+
+                </div>
+
+
+<!-- ADMIN YANG SEDANG LOGIN -->
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="p-5 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+            <i data-lucide="shield-check"
+               class="w-5 h-5 text-emerald-700"></i>
+
+            <h4 class="font-bold text-gray-800">
+                Admin yang Sedang Login
+            </h4>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-1">
+            Informasi akun yang sedang mengakses dashboard saat ini.
+        </p>
+    </div>
+
+    <!-- IDENTITAS ADMIN -->
+    <div class="p-5">
+
+        <div class="flex items-center gap-4">
+
+            <!-- FOTO PROFIL -->
+            <div class="w-16 h-16 rounded-full overflow-hidden
+                        border-2 border-emerald-100 bg-emerald-50
+                        flex-shrink-0">
+
+                <img
+                    id="current-admin-photo"
+                    src="assets/images/logo.png"
+                    alt="Foto admin yang login"
+                    class="w-full h-full object-cover"
+                >
+            </div>
+
+            <!-- IDENTITAS -->
+            <div class="flex-1 min-w-0">
+
+                <h4
+                    id="current-admin-name"
+                    class="font-bold text-gray-800 text-base"
+                >
+                    Memuat profil admin...
+                </h4>
+
+                <p
+                    id="current-admin-email"
+                    class="text-sm text-gray-500 break-all mt-1"
+                >
+                    -
+                </p>
+
+                <div class="flex flex-wrap items-center gap-2 mt-2">
+
+                    <span class="inline-flex items-center gap-1.5
+                                 px-2.5 py-1 bg-emerald-50
+                                 text-emerald-700 rounded-full
+                                 text-xs font-semibold">
+
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                        Sedang Login
+                    </span>
+
+                    <span
+                        id="current-admin-role"
+                        class="px-2.5 py-1 bg-gray-100
+                               text-gray-600 rounded-full
+                               text-xs font-semibold"
+                    >
+                        Admin
+                    </span>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PENGATURAN FOTO PROFIL -->
+        <div class="mt-5 pt-4 border-t border-gray-100">
+
+            <p class="text-xs font-semibold text-gray-700 mb-2">
+                Ubah Foto Profil
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-2">
+
+                <input
+                    type="url"
+                    id="url-admin-profile"
+                    placeholder="URL foto Google Drive"
+                    class="flex-1 min-w-0 text-xs border border-gray-200
+                           rounded-lg px-3 py-2.5 outline-none
+                           focus:ring-2 focus:ring-emerald-500
+                           focus:border-emerald-500"
+                >
+
+                <button
+                    type="button"
+                    id="btn-save-admin-profile"
+                    onclick="saveAdminProfilePhoto()"
+                    class="px-4 py-2.5 bg-[#064E36]
+                           hover:bg-emerald-800 text-white
+                           text-xs font-semibold rounded-lg
+                           transition flex items-center justify-center
+                           gap-2 whitespace-nowrap"
+                >
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                    Simpan Foto
+                </button>
+
+            </div>
+
+            <p class="text-[10px] text-gray-400 mt-2">
+                Gunakan foto Google Drive yang memiliki akses publik.
+                Foto akan diperbarui pada profil dan sidebar.
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
+                
+
+                <!-- DAFTAR ADMIN -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+
+                    <div class="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                        <div>
+                            <h4 class="font-bold text-gray-800">
+                                Daftar Administrator
+                            </h4>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Daftar akun admin yang terdaftar di website.
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-semibold">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span id="admin-total">0 Admin</span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead>
+                                <tr>
+                                    <th class="px-5 py-3">Admin</th>
+                                    <th class="px-5 py-3">Jabatan</th>
+                                    <th class="px-5 py-3">Status</th>
+                                    <th class="px-5 py-3">Keterangan</th>
+                                    <th class="px-5 py-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="admin-list">
+                                <tr>
+                                    <td colspan="5" class="px-5 py-10 text-center">
+                                        <div class="flex flex-col items-center gap-2 text-gray-400">
+                                            <i data-lucide="users" class="w-8 h-8"></i>
+                                            <span class="text-sm">
+                                                Data administrator akan dimuat di sini.
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- ================= TAB 6: PENGATURAN ================= -->
+            <div id="tab-pengaturan" class="tab-content hidden space-y-6">
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6 max-w-4xl">
+
+                    <h3 class="text-lg font-bold text-gray-800 pb-3 border-b border-gray-100">
+                        Profil & Informasi Operasional Desa Mekarsari
+                    </h3>
+
+                    <form id="form-pengaturan" onsubmit="savePengaturan(event)" class="space-y-6">
+
+
+                        <div class="border-t border-gray-100"></div>
+
+
+                        <!-- ================= INFORMASI WILAYAH ================= -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                Kecamatan & Kabupaten
+                            </label>
+
+                            <input
+                                type="text"
+                                id="set-wilayah"
+                                placeholder="Kecamatan, Kabupaten, Provinsi"
+                                class="w-full text-sm border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-dark focus:outline-none"
+                            >
+                        </div>
+
+
+                        <!-- ================= ALAMAT ================= -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                Alamat Lengkap
+                            </label>
+
+                            <textarea
+                                id="set-alamat"
+                                rows="2"
+                                placeholder="Masukkan alamat lengkap destinasi"
+                                class="w-full text-sm border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-dark focus:outline-none"
+                            ></textarea>
+                        </div>
+
+
+                        <!-- ================= KONTAK & OPERASIONAL ================= -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                    Telepon / WhatsApp
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="set-telp"
+                                    placeholder="Nomor telepon / WhatsApp"
+                                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-dark focus:outline-none"
+                                >
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                    Email Resmi
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="set-email"
+                                    placeholder="Email resmi destinasi"
+                                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-dark focus:outline-none"
+                                >
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                    Jam Operasional
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="set-jam"
+                                    placeholder="Senin - Minggu (08.00 - 16.30 WIB)"
+                                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-dark focus:outline-none"
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================= MEDIA SOSIAL ================= -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                    Instagram
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="set-ig"
+                                    placeholder="@username_instagram atau link Instagram"
+                                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-dark focus:outline-none"
+                                >
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                    YouTube Channel
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="set-yt"
+                                    placeholder="Nama atau link channel YouTube"
+                                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-dark focus:outline-none"
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================= BUTTON SIMPAN ================= -->
+                        <div class="pt-4 border-t border-gray-100 flex justify-end">
+
+                            <button
+                                type="submit"
+                                class="px-6 py-2.5 bg-[#064E36] text-white font-medium rounded-xl text-sm hover:bg-emerald-800 transition flex items-center gap-2"
+                            >
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                <span>Simpan Perubahan Pengaturan</span>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- ================= MODAL PAKET WISATA ================= -->
+<div id="modal-paket" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-xl">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center border-b pb-3">
+            <h3 id="modal-paket-title" class="font-bold text-gray-800">
+                Tambah Paket Wisata Baru
+            </h3>
+
+            <button onclick="closeModalPaket()" class="text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- FORM -->
+        <form id="form-paket" onsubmit="savePaket(event)" class="space-y-4">
+
+            <input type="hidden" id="paket-id">
+
+            <!-- NAMA PAKET -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Nama Paket
+                </label>
+
+                <input
+                    type="text"
+                    id="paket-nama"
+                    required
+                    placeholder="Contoh: Paket Workshop Anyaman Bambu"
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-brand-dark"
+                >
+            </div>
+
+            <!-- KATEGORI & HARGA -->
+            <div class="grid grid-cols-2 gap-3">
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">
+                        Kategori
+                    </label>
+
+                    <select
+                        id="paket-kategori"
+                        class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                    >
+                        <option value="Edukasi">Edukasi</option>
+                        <option value="Budaya">Budaya</option>
+                        <option value="Kuliner">Kuliner</option>
+                        <option value="Petualangan">Petualangan</option>
+                        <option value="Komunitas">Komunitas</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">
+                        Harga (Rp)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="paket-harga"
+                        required
+                        min="0"
+                        placeholder="50000"
+                        class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                    >
+                </div>
+
+            </div>
+
+            <!-- DURASI & MIN PESERTA -->
+            <div class="grid grid-cols-2 gap-3">
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">
+                        Durasi
+                    </label>
+
+                    <input
+                        type="text"
+                        id="paket-durasi"
+                        required
+                        placeholder="3 Jam / Full Day"
+                        class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">
+                        Minimal Peserta
+                    </label>
+
+                    <input
+                        type="text"
+                        id="paket-min"
+                        required
+                        placeholder="5 orang"
+                        class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                    >
+                </div>
+
+            </div>
+
+            <!-- JADWAL -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Jadwal Pelaksanaan
+                </label>
+
+                <input
+                    type="text"
+                    id="paket-jadwal"
+                    placeholder="Contoh: Setiap Hari | 11.30 – 14.00"
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                >
+            </div>
+
+            <!-- FOTO SAMPUL -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    URL Foto Sampul
+                </label>
+
+                <input
+                    type="url"
+                    id="paket-gambar"
+                    required
+                    placeholder="https://..."
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                >
+            </div>
+
+            <!-- GALERI -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Galeri Foto Tambahan
+                </label>
+
+                <textarea
+                    id="paket-galeri"
+                    rows="3"
+                    placeholder="Masukkan URL foto, pisahkan dengan koma&#10;https://foto1.jpg, https://foto2.jpg"
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                ></textarea>
+
+                <p class="text-[11px] text-gray-500 mt-1">
+                    Masukkan URL foto tambahan, pisahkan setiap URL dengan koma.
+                </p>
+            </div>
+
+            <!-- DESKRIPSI SINGKAT -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Deskripsi Singkat
+                </label>
+
+                <textarea
+                    id="paket-deskripsi"
+                    rows="3"
+                    required
+                    placeholder="Deskripsi singkat yang tampil pada kartu paket wisata."
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                ></textarea>
+            </div>
+
+            <!-- DESKRIPSI LENGKAP -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Deskripsi Lengkap
+                </label>
+
+                <textarea
+                    id="paket-deskripsi-lengkap"
+                    rows="5"
+                    placeholder="Jelaskan detail pengalaman, aktivitas, dan informasi paket wisata."
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                ></textarea>
+            </div>
+
+            <!-- APA YANG DIDAPATKAN -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Apa yang Anda Dapatkan?
+                </label>
+
+                <textarea
+                    id="paket-fasilitas"
+                    rows="4"
+                    placeholder="Nasi Liwet Kastrol komplit, Ayam goreng kampung, Aneka lalapan, Teh hangat free flow"
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                ></textarea>
+
+                <p class="text-[11px] text-gray-500 mt-1">
+                    Pisahkan setiap fasilitas atau benefit dengan koma.
+                </p>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="flex justify-end gap-2 pt-3 border-t">
+
+                <button
+                    type="button"
+                    onclick="closeModalPaket()"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="submit"
+                    class="px-4 py-2 bg-[#064E36] text-white rounded-lg text-sm font-medium hover:bg-emerald-800"
+                >
+                    Simpan Paket
+                </button>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+    <!-- Modal Detail & Ubah Status Pemesanan -->
+    <div id="modal-pemesanan" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-gray-800">Detail Pemesanan Wisata</h3>
+                <button onclick="closeModalPemesanan()" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="pemesanan-detail-content" class="space-y-3 text-sm">
+                <!-- Dynamic Content -->
+            </div>
+            <div class="pt-4 border-t flex items-center justify-between">
+                <span class="text-xs text-gray-500">Ubah Status Pemesanan:</span>
+                <div class="flex gap-2">
+                    <button onclick="updateBookingStatus('Dikonfirmasi')" class="px-3 py-1.5 bg-emerald-600 text-white text-xs font-semibold rounded-lg hover:bg-emerald-700">Konfirmasi</button>
+                    <button onclick="updateBookingStatus('Selesai')" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700">Selesai</button>
+                    <button onclick="updateBookingStatus('Dibatalkan')" class="px-3 py-1.5 bg-rose-600 text-white text-xs font-semibold rounded-lg hover:bg-rose-700">Batalkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- Modal Galeri Foto -->
+<div id="modal-galeri" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
+        <div class="flex justify-between items-center border-b pb-3">
+            <h3 id="modal-galeri-title" class="font-bold text-gray-800">Tambah Foto Galeri</h3>
+            <button onclick="closeModalGaleri()" class="text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form id="form-galeri" onsubmit="saveGaleri(event)" class="space-y-4">
+            <input type="hidden" id="galeri-id">
+
+            <!-- JUDUL -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Judul Foto
+                </label>
+                <input
+                    type="text"
+                    id="galeri-judul"
+                    required
+                    placeholder="Sentra Kerajinan Bambu Selaawi"
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                >
+            </div>
+
+            <!-- CAPTION / DESKRIPSI -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Deskripsi / Caption Foto
+                </label>
+                <textarea
+                    id="galeri-caption"
+                    rows="3"
+                    placeholder="Ceritakan aktivitas atau informasi pada foto..."
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5 resize-y"
+                ></textarea>
+            </div>
+
+            <!-- KATEGORI -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    Kategori
+                </label>
+                <select
+                    id="galeri-kategori"
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                >
+                    <option value="Kegiatan">Kegiatan</option>
+                    <option value="Kerajinan">Kerajinan</option>
+                    <option value="Budaya">Budaya</option>
+                    <option value="Alam">Alam</option>
+                    <option value="Kuliner">Kuliner</option>
+                </select>
+            </div>
+
+            <!-- URL GAMBAR -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">
+                    URL Gambar
+                </label>
+                <input
+                    type="url"
+                    id="galeri-url"
+                    required
+                    placeholder="https://..."
+                    class="w-full text-sm border border-gray-300 rounded-lg p-2.5"
+                >
+            </div>
+
+            <!-- BUTTON -->
+            <div class="flex justify-end gap-2 pt-3 border-t">
+                <button
+                    type="button"
+                    onclick="closeModalGaleri()"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="submit"
+                    class="px-4 py-2 bg-[#064E36] text-white rounded-lg text-sm font-medium hover:bg-emerald-800"
+                >
+                    Simpan Foto
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= JAVASCRIPT LOGIC ================= -->
+<script type="module">
+
+    import {
+        createDocument,
+        updateDocument,
+        subscribeDocuments,
+        getDocument,
+        COLLECTIONS
+    } from "./assets/js/data-service.js";
+
+    
+    import {
+        signOut,
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    import { auth } from "./assets/js/firebase-core.js";
+
+// =========================================================
+// AUTH GUARD — PROTEKSI HALAMAN ADMIN
+// =========================================================
+
+onAuthStateChanged(auth, (user) => {
+    const authGuard = document.getElementById("authGuard");
+
+    if (!user) {
+        // Belum login, blokir dashboard dan kembali ke login
+        window.location.replace("./login.html");
+        return;
+    }
+    window.currentLoggedAdminUid = user.uid;
+    initAdminProfiles();
+
+    // UPDATE PROFIL ADMIN SESUAI AKUN YANG LOGIN
+    updateAdminProfile(user);
+
+    // Sudah login, izinkan akses dashboard
+    if (authGuard) {
+        authGuard.style.display = "none";
+    }
+    // ======================================
+    // IDENTITAS ADMIN YANG SEDANG LOGIN
+    // ======================================
+
+    const currentAdminName =
+        user.displayName || "Administrator";
+
+    const currentAdminEmail =
+        user.email || "Email tidak tersedia";
+
+
+    // Nama
+    const nameElement = document.getElementById("current-admin-name");
+    if (nameElement) {
+        nameElement.textContent = currentAdminName;
+    }
+
+    // Email
+    const emailElement = document.getElementById("current-admin-email");
+    if (emailElement) {
+        emailElement.textContent = currentAdminEmail;
+    }
+
+
+    // Role sementara
+    const roleElement = document.getElementById("current-admin-role");
+    if (roleElement) {
+        roleElement.textContent = "Admin";
+    }
+
+    // Sidebar email
+    const sidebarEmail = document.getElementById("admin-email");
+    if (sidebarEmail) {
+        sidebarEmail.textContent = currentAdminEmail;
+    }
+
+});
+
+
+    let currentActiveBookingId = null;
+
+    // Data booking realtime dari Firestore
+    let dataBookingAdmin = [];
+    let unsubscribeBookingAdmin = null;
+
+    // Initialize App & Render
+    window.addEventListener('DOMContentLoaded', () => {
+
+    // ================= MOBILE SIDEBAR DRAWER =================
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const sidebarClose = document.getElementById('sidebar-close');
+
+    function openSidebar() {
+        sidebar?.classList.remove('-translate-x-full');
+        sidebarOverlay?.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function closeSidebar() {
+        sidebar?.classList.add('-translate-x-full');
+        sidebarOverlay?.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    // Pasang listener drawer SEBELUM inisialisasi dashboard
+    mobileToggle?.addEventListener('click', openSidebar);
+    sidebarClose?.addEventListener('click', closeSidebar);
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+
+    // Tutup sidebar setelah memilih menu
+    document.querySelectorAll('#sidebar .nav-item').forEach(button => {
+        button.addEventListener('click', () => {
+            if (window.innerWidth < 768) {
+                closeSidebar();
+            }
+        });
+    });
+
+    // Tutup drawer jika kembali ke desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
+            closeSidebar();
+        }
+    });
+
+    // ================= INITIALIZE DASHBOARD =================
+    lucide.createIcons();
+
+    updateCurrentDate();
+    initChart();
+    initRealtimeChart();
+    initRealtimeBookings();
+
+    
+    initPesanMasuk();
+    initPengaturan();
+    
+
+});
+
+
+
+async function updateAdminProfile(user) {
+    // ==================================================
+    // ELEMENT SIDEBAR
+    // ==================================================
+    const nameElement = document.getElementById("admin-name");
+    const emailElement = document.getElementById("admin-email");
+    const photoElement = document.getElementById("admin-photo");
+    const fallbackElement = document.getElementById("admin-avatar-fallback");
+    const roleElement = document.getElementById("admin-role");
+
+
+    // ==================================================
+    // ELEMENT MANAJEMEN ADMIN
+    // ==================================================
+    const currentName = document.getElementById("current-admin-name");
+    const currentEmail = document.getElementById("current-admin-email");
+    const currentPhoto = document.getElementById("current-admin-photo");
+    const currentRole = document.getElementById("current-admin-role");
+    const profilePhotoInput = document.getElementById("url-admin-profile");
+
+    if (!user) return;
+
+    // UID admin yang sedang login
+    window.adminProfileUid = user.uid;
+
+    // ==================================================
+    // FALLBACK DARI FIREBASE AUTH
+    // ==================================================
+    const authName = user.displayName || "Admin Pengelola";
+    const authEmail = user.email || "Email tidak tersedia";
+
+    if (nameElement) nameElement.textContent = authName;
+    if (emailElement) emailElement.textContent = authEmail;
+    if (roleElement) roleElement.textContent = "Administrator";
+
+    if (currentName) currentName.textContent = authName;
+    if (currentEmail) currentEmail.textContent = authEmail;
+    if (currentRole) currentRole.textContent = "Administrator";
+
+    // Inisial sidebar
+    if (fallbackElement) {
+        fallbackElement.textContent =
+            authName.trim().charAt(0).toUpperCase();
+
+        fallbackElement.classList.remove("hidden");
+    }
+
+    // Reset foto sidebar
+    if (photoElement) {
+        photoElement.classList.add("hidden");
+        photoElement.removeAttribute("src");
+    }
+
+    // Foto kartu admin kembali ke logo default
+    if (currentPhoto) {
+        currentPhoto.src = "assets/images/logo.png";
+    }
+
+    try {
+        // ==================================================
+        // AMBIL PROFIL ADMIN DARI FIRESTORE
+        // ==================================================
+        const profile = await getDocument(
+            COLLECTIONS.adminProfiles,
+            user.uid
+        );
+
+        if (!profile) {
+            console.warn(
+                "Profil admin Firestore tidak ditemukan:",
+                user.uid
+            );
+
+            if (profilePhotoInput) {
+                profilePhotoInput.value = "";
+            }
+
+            return;
+        }
+
+        // ==================================================
+        // DATA PROFIL
+        // ==================================================
+        const adminName = profile.nama || authName;
+        const adminEmail = profile.email || authEmail;
+        const adminRole = profile.jabatan || "Administrator";
+        const adminPhoto = profile.foto || "";
+
+        // ==================================================
+        // UPDATE IDENTITAS SIDEBAR
+        // ==================================================
+        if (nameElement) nameElement.textContent = adminName;
+        if (emailElement) emailElement.textContent = adminEmail;
+        if (roleElement) roleElement.textContent = adminRole;
+
+        // ==================================================
+        // UPDATE IDENTITAS KARTU MANAJEMEN ADMIN
+        // ==================================================
+        if (currentName) currentName.textContent = adminName;
+        if (currentEmail) currentEmail.textContent = adminEmail;
+        if (currentRole) currentRole.textContent = adminRole;
+
+        // ==================================================
+        // UPDATE INPUT FOTO
+        // ==================================================
+        if (profilePhotoInput) {
+            profilePhotoInput.value = adminPhoto;
+        }
+
+        // ==================================================
+        // UPDATE INISIAL SIDEBAR
+        // ==================================================
+        if (fallbackElement) {
+            const initials = adminName
+                .trim()
+                .split(/\s+/)
+                .map(word => word.charAt(0))
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+
+            fallbackElement.textContent = initials || "A";
+            fallbackElement.classList.remove("hidden");
+        }
+
+        // ==================================================
+        // KONVERSI URL FOTO
+        // ==================================================
+        const photoURL = adminPhoto
+            ? window.convertDriveUrl(adminPhoto)
+            : "";
+
+        // ==================================================
+        // TAMPILKAN FOTO DI KARTU MANAJEMEN ADMIN
+        // ==================================================
+        if (currentPhoto) {
+            if (photoURL) {
+                currentPhoto.onload = function () {
+                    currentPhoto.classList.remove("hidden");
+                };
+
+                currentPhoto.onerror = function () {
+                    currentPhoto.src = "assets/images/logo.png";
+                };
+
+                currentPhoto.src = photoURL;
+            } else {
+                currentPhoto.src = "assets/images/logo.png";
+            }
+        }
+
+        // ==================================================
+        // TAMPILKAN FOTO DI SIDEBAR
+        // ==================================================
+        if (photoElement && photoURL) {
+            photoElement.onload = function () {
+                photoElement.classList.remove("hidden");
+
+                if (fallbackElement) {
+                    fallbackElement.classList.add("hidden");
+                }
+            };
+
+            photoElement.onerror = function () {
+                photoElement.classList.add("hidden");
+
+                if (fallbackElement) {
+                    fallbackElement.classList.remove("hidden");
+                }
+
+                console.error(
+                    "Foto profil gagal dimuat:",
+                    photoURL
+                );
+            };
+
+            photoElement.src = photoURL;
+        }
+
+    } catch (error) {
+        console.error(
+            "Gagal mengambil profil admin dari Firestore:",
+            error
+        );
+    }
+    }
+
+    // =========================================================
+    // MANAJEMEN ADMIN — DAFTAR ADMIN FIRESTORE
+    // =========================================================
+
+    let unsubscribeAdminProfiles = null;
+
+    // Amankan teks dari data Firestore sebelum dimasukkan ke HTML
+    function escapeAdminHTML(value = "") {
+        return String(value).replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[char]));
+    }
+
+    // Inisial nama untuk avatar fallback
+    function getAdminInitials(name = "Admin") {
+        return String(name)
+            .trim()
+            .split(/\s+/)
+            .map(word => word.charAt(0))
+            .join("")
+            .substring(0, 2)
+            .toUpperCase() || "A";
+    }
+
+    // Mulai listener daftar admin realtime
+    function initAdminProfiles() {
+        // Hindari listener dobel
+        if (unsubscribeAdminProfiles) {
+            unsubscribeAdminProfiles();
+        }
+
+        unsubscribeAdminProfiles = subscribeDocuments(
+            COLLECTIONS.adminProfiles,
+            (admins) => {
+                renderAdminList(admins);
+            },
+            {},
+            (error) => {
+                console.error("Gagal memuat daftar admin:", error);
+
+                const tbody = document.getElementById("admin-list");
+
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-5 py-8 text-center text-red-500 text-sm">
+                                Gagal memuat daftar administrator.
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        );
+    }
+
+    // Render tabel daftar admin
+    function renderAdminList(admins = []) {
+        const tbody = document.getElementById("admin-list");
+        const totalElement = document.getElementById("admin-total");
+
+        if (!tbody) return;
+
+        // UID admin yang sedang login
+        const currentUid = window.currentLoggedAdminUid || "";
+
+        // Urutkan: admin yang login ditampilkan paling atas
+        admins.sort((a, b) => {
+            const aCurrent = a.id === currentUid ? 1 : 0;
+            const bCurrent = b.id === currentUid ? 1 : 0;
+
+            return bCurrent - aCurrent;
+        });
+
+        // Total admin
+        if (totalElement) {
+            totalElement.textContent = `${admins.length} Admin`;
+        }
+
+        // Jika data kosong
+        if (admins.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-5 py-10 text-center text-gray-400 text-sm">
+                        Belum ada data administrator.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = admins.map(admin => {
+            const nama = admin.nama || "Administrator";
+            const email = admin.email || "-";
+            const jabatan = admin.jabatan || "Administrator";
+            const foto = admin.foto || "";
+            const isCurrentAdmin = admin.id === currentUid;
+            const isActive = admin.aktif !== false;
+
+            const initials = getAdminInitials(nama);
+
+            // Konversi URL foto Google Drive jika diperlukan
+            let photoURL = foto;
+
+            if (foto && typeof convertDriveUrl === "function") {
+                photoURL = convertDriveUrl(foto);
+            }
+
+            const safeName = escapeAdminHTML(nama);
+            const safeEmail = escapeAdminHTML(email);
+            const safeRole = escapeAdminHTML(jabatan);
+            const safePhoto = escapeAdminHTML(photoURL);
+            const safeInitials = escapeAdminHTML(initials);
+
+            return `
+                <tr class="hover:bg-gray-50 transition">
+
+                    <!-- IDENTITAS ADMIN -->
+                    <td class="px-5 py-4">
+                        <div class="flex items-center gap-3 min-w-[220px]">
+
+                            <div class="w-10 h-10 rounded-full overflow-hidden bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0">
+
+                                ${
+                                    photoURL
+                                    ? `
+                                        <img
+                                            src="${safePhoto}"
+                                            alt="${safeName}"
+                                            class="w-full h-full object-cover"
+                                            onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')"
+                                        >
+                                        <span class="hidden text-xs font-bold text-emerald-700">
+                                            ${safeInitials}
+                                        </span>
+                                    `
+                                    : `
+                                        <span class="text-xs font-bold text-emerald-700">
+                                            ${safeInitials}
+                                        </span>
+                                    `
+                                }
+
+                            </div>
+
+                            <div class="min-w-0">
+                                <div class="font-semibold text-gray-800">
+                                    ${safeName}
+                                    ${
+                                        isCurrentAdmin
+                                        ? `
+                                            <span class="ml-1 text-[10px] text-emerald-700 font-bold">
+                                                (Anda)
+                                            </span>
+                                        `
+                                        : ""
+                                    }
+                                </div>
+
+                                <div class="text-xs text-gray-500 break-all mt-0.5">
+                                    ${safeEmail}
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <!-- JABATAN -->
+                    <td class="px-5 py-4">
+                        <span class="text-sm text-gray-700">
+                            ${safeRole}
+                        </span>
+                    </td>
+
+                    <!-- STATUS -->
+                    <td class="px-5 py-4">
+                        ${
+                            isActive
+                            ? `
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Aktif
+                                </span>
+                            `
+                            : `
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                    Nonaktif
+                                </span>
+                            `
+                        }
+                    </td>
+
+                    <!-- KETERANGAN -->
+                    <td class="px-5 py-4">
+                        <span class="text-xs text-gray-400">
+                            Administrator
+                        </span>
+                    </td>
+
+                    <!-- AKSI -->
+                    <td class="px-5 py-4 text-center">
+                        <span class="text-xs text-gray-400">
+                            —
+                        </span>
+                    </td>
+
+                </tr>
+            `;
+        }).join("");
+
+        // Refresh ikon Lucide
+        if (typeof lucide !== "undefined") {
+            lucide.createIcons();
+        }
+    }
+
+        // Tab Switcher
+        function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('sidebar-active'));
+
+    const targetTab = document.getElementById(`tab-${tabName}`);
+    const targetNav = document.getElementById(`nav-${tabName}`);
+
+    if (targetTab) targetTab.classList.remove('hidden');
+    if (targetNav) targetNav.classList.add('sidebar-active');
+
+    // Titles
+    const titles = {
+        'dashboard': 'Dashboard Overview',
+        'paket': 'Kelola Paket Wisata Bambu',
+        'pemesanan': 'Manajemen Pemesanan Wisatawan',
+        'galeri': 'Kelola Galeri Foto Edu Wisata',
+        'gambar': 'Manajemen Gambar Website',
+        'pesan': 'Pesan Masuk Pengunjung',
+        'admin': 'Manajemen Administrator',
+        'pengaturan': 'Pengaturan Informasi Wisata Desa'
+        
+    };
+
+    document.getElementById('page-title').innerText =
+        titles[tabName] || 'Admin Dashboard';
+
+    // Refresh pesan masuk ketika tab dibuka
+    if (tabName === 'pesan') {
+        renderPesanMasuk();
+        updateBadgePesan();
+    }
+
+    // Refresh lucide icons
+    setTimeout(() => lucide.createIcons(), 50);
+}
+// Daftarkan fungsi navigasi agar bisa dipanggil dari HTML
+window.switchTab = switchTab;
+        // Toast Alert Function (No alert())
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-900 text-emerald-100 border-emerald-500' : 'bg-rose-900 text-rose-100 border-rose-500';
+            
+            toast.className = `px-4 py-3 rounded-xl border shadow-lg text-sm font-medium transition duration-300 transform translate-y-2 pointer-events-auto flex items-center gap-2 ${bgClass}`;
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Chart.js Setup
+        // ==========================================
+        // GRAFIK PEMESANAN REALTIME
+        // ==========================================
+
+        let chartPemesananInstance = null;
+
+        function initChart() {
+            const canvas = document.getElementById('chartPemesanan');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+
+            const labels = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+                'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+            ];
+
+            chartPemesananInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Reservasi Wisatawan',
+                        data: Array(12).fill(0),
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#064E36',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.04)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // LISTENER DATA BOOKING FIRESTORE
+        // ==========================================
+
+        async function initRealtimeChart() {
+            try {
+                const { subscribeDocuments, COLLECTIONS } =
+                    await import("./assets/js/data-service.js");
+
+                subscribeDocuments(
+                    COLLECTIONS.bookings,
+                    (dataBooking) => {
+                        updateChartPemesanan(dataBooking);
+                    },
+                    {},
+                    (error) => {
+                        console.error(
+                            "Gagal memuat data grafik realtime:",
+                            error
+                        );
+                    }
+                );
+
+            } catch (error) {
+                console.error("Gagal menginisialisasi grafik:", error);
+            }
+        }
+
+        // =====================================================
+        // BOOKING ADMIN - FIRESTORE REALTIME
+        // =====================================================
+
+
+        async function initRealtimeBookings() {
+            try {
+                const {
+                    subscribeDocuments,
+                    COLLECTIONS
+                } = await import("./assets/js/data-service.js");
+
+                // Hindari listener ganda
+                if (unsubscribeBookingAdmin) {
+                    unsubscribeBookingAdmin();
+                }
+
+                unsubscribeBookingAdmin = subscribeDocuments(
+                    COLLECTIONS.bookings,
+                    (data) => {
+
+                        // Normalisasi data Firestore
+                        dataBookingAdmin = data.map(booking => ({
+                            ...booking,
+
+                            // ID dokumen Firestore (untuk operasi update)
+                            id: booking.id,
+
+                            // ID Booking personal (untuk ditampilkan)
+                            bookingId:
+                                booking.bookingId ||
+                                booking.id,
+
+                            nama:
+                                booking.nama ||
+                                "-",
+
+                            telepon:
+                                booking.whatsapp ||
+                                booking.telepon ||
+                                "-",
+
+                            email:
+                                booking.email ||
+                                "-",
+
+                            paketNama:
+                                booking.paket ||
+                                booking.namaPaket ||
+                                booking.paketNama ||
+                                "-",
+
+                            peserta:
+                                Number(
+                                    booking.jumlahPeserta ??
+                                    booking.jumlah ??
+                                    booking.peserta ??
+                                    0
+                                ),
+
+                            totalHarga:
+                                Number(
+                                    booking.total ??
+                                    booking.totalHarga ??
+                                    0
+                                ),
+
+                            // Normalisasi status
+                            status:
+                                booking.status === "Menunggu Konfirmasi"
+                                    ? "Menunggu"
+                                    : booking.status || "Menunggu"
+                        }));
+
+                        // Urutkan berdasarkan tanggal kunjungan terbaru
+                        dataBookingAdmin.sort((a, b) => {
+                            return new Date(b.tanggal || 0) -
+                                new Date(a.tanggal || 0);
+                        });
+
+
+                        // Render bagian dashboard
+                        renderBookingsTable();
+                        renderDashboardRecentBookings();
+                        updatePendingCount();
+                    },
+                    {},
+                    (error) => {
+                        console.error(
+                            "Gagal mengambil data booking Firestore:",
+                            error
+                        );
+
+                        showToast(
+                            "Gagal memuat data pemesanan",
+                            "error"
+                        );
+                    }
+                );
+
+            } catch (error) {
+                console.error(
+                    "Inisialisasi booking realtime gagal:",
+                    error
+                );
+            }
+        }
+
+
+
+
+        // ==========================================
+        // UPDATE DATA GRAFIK
+        // ==========================================
+
+        function updateChartPemesanan(dataBooking) {
+            if (!chartPemesananInstance) return;
+
+            const tahunSekarang = new Date().getFullYear();
+            const dataBulanan = Array(12).fill(0);
+
+            dataBooking.forEach(booking => {
+                if (!booking.tanggal) return;
+
+                // Abaikan booking yang dibatalkan
+                const status = String(booking.status || "").toLowerCase();
+
+                if (status === "dibatalkan" || status === "batal") {
+                    return;
+                }
+
+                // Membaca tanggal booking
+                const tanggal = new Date(booking.tanggal + "T00:00:00");
+
+                if (isNaN(tanggal.getTime())) return;
+
+                // Hanya hitung booking tahun berjalan
+                if (tanggal.getFullYear() !== tahunSekarang) return;
+
+                // Ambil index bulan (Januari = 0)
+                const bulan = tanggal.getMonth();
+
+                dataBulanan[bulan]++;
+            });
+
+            // Update grafik tanpa membuat grafik baru
+            chartPemesananInstance.data.datasets[0].data = dataBulanan;
+
+            chartPemesananInstance.data.datasets[0].label =
+                `Total Reservasi Wisatawan ${tahunSekarang}`;
+
+            chartPemesananInstance.update();
+        }
+
+                // =====================================================
+        // RENDER BOOKING TERBARU DI DASHBOARD
+        // =====================================================
+
+        // =====================================================
+        // RENDER BOOKING TERBARU DI DASHBOARD
+        // =====================================================
+
+        function renderDashboardRecentBookings() {
+            const tbody = document.getElementById('recent-bookings-tbody');
+            if (!tbody) return;
+
+            const recentBookings = dataBookingAdmin.slice(0, 5);
+
+            if (recentBookings.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-gray-400 text-sm">
+                            Belum ada pemesanan masuk.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = recentBookings.map(b => {
+                const badge = getStatusBadgeHTML(b.status);
+
+                return `
+                    <tr class="hover:bg-gray-50/80 transition">
+
+                        <!-- ID BOOKING PERSONAL -->
+                        <td class="py-3 px-4 font-bold text-emerald-800 text-xs whitespace-nowrap">
+                            ${b.bookingId || b.id}
+                        </td>
+
+                        <!-- NAMA PEMESAN -->
+                        <td class="py-3 px-4 font-medium text-gray-700">
+                            ${b.nama}
+                        </td>
+
+                        <!-- PAKET -->
+                        <td class="py-3 px-4 text-xs text-gray-600 truncate max-w-[200px]">
+                            ${b.paketNama}
+                        </td>
+
+                        <!-- TANGGAL KUNJUNGAN -->
+                        <td class="py-3 px-4 text-xs">
+                            ${formatDate(b.tanggal)}
+                        </td>
+
+                        <!-- STATUS -->
+                        <td class="py-3 px-4">
+                            ${badge}
+                        </td>
+
+                        <!-- AKSI -->
+                        <td class="py-3 px-4 text-center">
+                            <button
+                                onclick="openModalPemesanan('${b.id}')"
+                                class="px-2.5 py-1 bg-emerald-50 text-brand-dark hover:bg-emerald-100 rounded-lg text-xs font-semibold transition">
+                                Detail
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+            }).join('');
+        }
+
+                // =====================================================
+        // RENDER TABEL SEMUA BOOKING
+        // =====================================================
+
+        function renderBookingsTable() {
+            const tbody = document.getElementById('bookings-tbody');
+            const filterElement = document.getElementById('filter-booking-status');
+
+            if (!tbody) return;
+
+            const filter = filterElement
+                ? filterElement.value
+                : "Semua";
+
+            let filtered = dataBookingAdmin;
+
+            if (filter !== "Semua") {
+                filtered = dataBookingAdmin.filter(b => b.status === filter);
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-8 text-gray-400 text-sm">
+                            Tidak ada data pemesanan ditemukan.
+                        </td>
+                    </tr>
+                `;
+
+                updatePendingCount();
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(b => `
+                <tr class="hover:bg-gray-50/80 transition">
+
+                    <td class="py-3 px-4 font-bold text-gray-800 text-xs">
+                        ${b.bookingId || b.id}
+                    </td>
+
+                    <td class="py-3 px-4 font-semibold text-gray-800">
+                        ${b.nama}
+                    </td>
+
+                    <td class="py-3 px-4 text-xs">
+                        <div>${b.telepon}</div>
+                        <div class="text-gray-400 text-[11px]">
+                            ${b.email}
+                        </div>
+                    </td>
+
+                    <td class="py-3 px-4 text-xs font-medium text-emerald-800 max-w-[180px]">
+                        ${b.paketNama}
+                    </td>
+
+                    <td class="py-3 px-4 text-xs font-bold text-gray-700">
+                        ${b.peserta} Orang
+                    </td>
+
+                    <td class="py-3 px-4 text-xs">
+                        ${formatDate(b.tanggal)}
+                    </td>
+
+                    <td class="py-3 px-4">
+                        ${getStatusBadgeHTML(b.status)}
+                    </td>
+
+
+                    <td class="px-4 py-3">
+                    <div class="flex items-center gap-2 flex-wrap">
+
+                        <a href="${getBookingWhatsAppLink(b)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onclick="event.stopPropagation()"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold transition whitespace-nowrap">
+
+                            <i class="fa-brands fa-whatsapp"></i>
+                            WhatsApp
+                        </a>
+
+                        <button onclick="openModalPemesanan('${b.id}')"
+                                class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold whitespace-nowrap">
+                            Kelola
+                        </button>
+
+                    </div>
+                </td>
+
+                </tr>
+            `).join('');
+
+            updatePendingCount();
+        }
+
+        
+
+
+
+
+
+
+                // =====================================================
+        // UPDATE STATISTIK BOOKING
+        // =====================================================
+
+        function updatePendingCount() {
+            const pending = dataBookingAdmin.filter(
+                b => b.status === "Menunggu"
+            ).length;
+
+            const statPending = document.getElementById("stat-pending");
+            const badgePending = document.getElementById("badge-pending");
+            const statPemesanan = document.getElementById("stat-pemesanan");
+
+            if (statPending) {
+                statPending.textContent = pending;
+            }
+
+            if (badgePending) {
+                badgePending.textContent = pending;
+            }
+
+            if (statPemesanan) {
+                statPemesanan.textContent = dataBookingAdmin.length;
+            }
+        }
+
+                // =====================================================
+        // STATUS BADGE BOOKING
+        // =====================================================
+
+        function getStatusBadgeHTML(status) {
+
+            if (
+                status === "Menunggu" ||
+                status === "Menunggu Konfirmasi"
+            ) {
+                return `
+                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                        Menunggu
+                    </span>
+                `;
+            }
+
+            if (status === "Dikonfirmasi") {
+                return `
+                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        Dikonfirmasi
+                    </span>
+                `;
+            }
+
+            if (status === "Selesai") {
+                return `
+                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                        Selesai
+                    </span>
+                `;
+            }
+
+            if (
+                status === "Dibatalkan" ||
+                status === "Batal"
+            ) {
+                return `
+                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-rose-100 text-rose-800 border border-rose-200">
+                        Dibatalkan
+                    </span>
+                `;
+            }
+
+            return `
+                <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-gray-100 text-gray-600">
+                    ${status || "Tidak diketahui"}
+                </span>
+            `;
+        }
+
+                // =====================================================
+        // MODAL DETAIL BOOKING
+        // =====================================================
+
+        function openModalPemesanan(id) {
+            const b = dataBookingAdmin.find(item => item.id === id);
+
+            if (!b) {
+                showToast("Data pemesanan tidak ditemukan", "error");
+                return;
+            }
+
+            currentActiveBookingId = id;
+
+            const detailEl = document.getElementById('pemesanan-detail-content');
+
+            if (!detailEl) return;
+
+            detailEl.innerHTML = `
+                <div class="bg-gray-50 p-3 rounded-xl space-y-1">
+
+                    <p class="text-xs text-gray-500">
+                        ID Pemesanan:
+                        <span class="font-bold text-gray-800">${b.id}</span>
+                    </p>
+
+                    <p class="font-bold text-base text-brand-dark">
+                        ${b.nama}
+                    </p>
+
+                    <p class="text-xs text-gray-600">
+                        Kontak: ${b.telepon} | ${b.email}
+                    </p>
+
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+
+                    <div class="bg-emerald-50/60 p-2.5 rounded-lg">
+                        <span class="text-gray-500 block">Paket Wisata</span>
+                        <span class="font-semibold text-gray-800">
+                            ${b.paketNama}
+                        </span>
+                    </div>
+
+                    <div class="bg-emerald-50/60 p-2.5 rounded-lg">
+                        <span class="text-gray-500 block">Jumlah Peserta</span>
+                        <span class="font-semibold text-gray-800">
+                            ${b.peserta} Orang
+                        </span>
+                    </div>
+
+                    <div class="bg-emerald-50/60 p-2.5 rounded-lg">
+                        <span class="text-gray-500 block">Tanggal Kunjungan</span>
+                        <span class="font-semibold text-gray-800">
+                            ${formatDate(b.tanggal)}
+                        </span>
+                    </div>
+
+                    <div class="bg-emerald-50/60 p-2.5 rounded-lg">
+                        <span class="text-gray-500 block">Total Pembayaran</span>
+                        <span class="font-semibold text-emerald-700">
+                            Rp ${Number(b.totalHarga || 0).toLocaleString('id-ID')}
+                        </span>
+                    </div>
+
+                </div>
+
+                ${
+                    b.catatan
+                    ? `
+                        <div class="bg-gray-50 rounded-xl p-3">
+                            <span class="text-xs text-gray-500 block mb-1">
+                                Catatan Pengunjung
+                            </span>
+
+                            <p class="text-sm text-gray-700 whitespace-pre-wrap">
+                                ${b.catatan}
+                            </p>
+                        </div>
+                    `
+                    : ""
+                }
+
+                ${
+                    Array.isArray(b.addons) && b.addons.length > 0
+                    ? `
+                        <div class="bg-gray-50 rounded-xl p-3">
+                            <span class="text-xs text-gray-500 block mb-2">
+                                Add-on
+                            </span>
+
+                            <div class="space-y-1">
+                                ${b.addons.map(addon => `
+                                    <div class="flex justify-between text-xs">
+                                        <span>${addon.nama || addon.name || "-"}</span>
+                                        <span>
+                                            Rp ${Number(addon.subtotal || addon.harga || 0).toLocaleString('id-ID')}
+                                        </span>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        </div>
+                    `
+                    : ""
+                }
+
+                <div class="pt-2 flex justify-between items-center">
+                    <span class="text-xs text-gray-500">
+                        Status Saat Ini:
+                    </span>
+
+                    ${getStatusBadgeHTML(b.status)}
+                </div>
+            `;
+
+            document.getElementById('modal-pemesanan').classList.remove('hidden');
+        }
+
+        function closeModalPemesanan() {
+            document.getElementById('modal-pemesanan').classList.add('hidden');
+        }
+
+        // =====================================================
+        // UPDATE STATUS BOOKING KE FIRESTORE
+        // =====================================================
+
+        async function updateBookingStatus(newStatus) {
+            if (!currentActiveBookingId) return;
+
+            const bookingId = currentActiveBookingId;
+
+            try {
+                const {
+                    updateDocument,
+                    COLLECTIONS
+                } = await import("./assets/js/data-service.js");
+
+                await updateDocument(
+                    COLLECTIONS.bookings,
+                    bookingId,
+                    {
+                        status: newStatus,
+                        updatedAt: new Date().toISOString()
+                    }
+                );
+
+                closeModalPemesanan();
+
+                showToast(
+                    `Status pemesanan berhasil diubah menjadi ${newStatus}`
+                );
+
+                // Data tabel dan dashboard akan otomatis diperbarui
+                // oleh listener Firestore realtime.
+
+            } catch (error) {
+                console.error(
+                    "Gagal memperbarui status booking:",
+                    error
+                );
+
+                showToast(
+                    "Gagal memperbarui status pemesanan",
+                    "error"
+                );
+            }
+        }
+
+
+
+        // Logout Handle
+        function handleLogout() {
+            if (confirm("Apakah Anda yakin ingin keluar dari panel admin?")) {
+                showToast("Anda telah keluar. Mengalihkan...", "success");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+        }
+
+        // Date Formatter Helper
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('id-ID', options);
+        }
+
+
+        // =====================================================
+        // PESAN MASUK - FIRESTORE REALTIME
+        // =====================================================
+
+        let dataPesanMasuk = [];
+        let filterPesanAktif = "semua";
+        let unsubscribePesan = null;
+
+        // Escape HTML untuk mencegah teks pengunjung
+        // dianggap sebagai HTML/script
+        function escapeHTMLPesan(value) {
+            return String(value ?? "").replace(/[&<>"']/g, char => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            }[char]));
+        }
+
+        // Format tanggal pesan
+        function formatWaktuPesan(value) {
+            if (!value) return "-";
+
+            let date;
+
+            if (value?.toDate) {
+                date = value.toDate();
+            } else {
+                date = new Date(value);
+            }
+
+            if (isNaN(date.getTime())) return "-";
+
+            return date.toLocaleString("id-ID", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        // Normalisasi nomor WhatsApp Indonesia
+        function nomorWhatsAppPesan(nomor) {
+            let clean = String(nomor || "").replace(/\D/g, "");
+
+            if (clean.startsWith("0")) {
+                clean = "62" + clean.slice(1);
+            } else if (clean.startsWith("8")) {
+                clean = "62" + clean;
+            }
+
+            return clean;
+        }
+
+        // Inisialisasi listener pesan realtime
+        async function initPesanMasuk() {
+            try {
+                const {
+                    subscribeDocuments,
+                    updateDocument,
+                    removeDocument,
+                    COLLECTIONS
+                } = await import("./assets/js/data-service.js");
+
+                // Hindari listener ganda
+                if (unsubscribePesan) {
+                    unsubscribePesan();
+                }
+
+                unsubscribePesan = subscribeDocuments(
+                    COLLECTIONS.messages,
+                    (data) => {
+                        dataPesanMasuk = data.sort((a, b) => {
+                            const waktuA = new Date(a.waktu || a.createdAt || 0).getTime();
+                            const waktuB = new Date(b.waktu || b.createdAt || 0).getTime();
+
+                            return waktuB - waktuA;
+                        });
+
+                        renderPesanMasuk();
+                        updateBadgePesan();
+                    },
+                    {},
+                    (error) => {
+                        console.error("Gagal memuat pesan masuk:", error);
+                        showToast("Gagal memuat pesan masuk", "error");
+                    }
+                );
+
+                // Tampilkan empty state langsung saat pertama kali dibuka
+                renderPesanMasuk();
+                updateBadgePesan();
+
+                // Fungsi tandai dibaca
+                window.tandaiPesanDibaca = async function(id) {
+                    try {
+                        await updateDocument(COLLECTIONS.messages, id, {
+                            status: "Sudah Dibaca"
+                        });
+
+                        showToast("Pesan ditandai sudah dibaca");
+                    } catch (error) {
+                        console.error("Gagal mengubah status pesan:", error);
+                        showToast("Gagal mengubah status pesan", "error");
+                    }
+                };
+
+                // Fungsi hapus pesan
+                window.hapusPesanMasuk = async function(id) {
+                    if (!confirm("Yakin ingin menghapus pesan ini?")) return;
+
+                    try {
+                        await removeDocument(COLLECTIONS.messages, id);
+
+                        showToast("Pesan berhasil dihapus");
+                    } catch (error) {
+                        console.error("Gagal menghapus pesan:", error);
+                        showToast("Gagal menghapus pesan", "error");
+                    }
+                };
+
+            } catch (error) {
+                console.error("Inisialisasi Pesan Masuk gagal:", error);
+            }
+        }
+
+        // Update badge unread sidebar
+        function updateBadgePesan() {
+            const badge = document.getElementById("badge-pesan");
+
+            if (!badge) return;
+
+            const unread = dataPesanMasuk.filter(
+                pesan => pesan.status !== "Sudah Dibaca"
+            ).length;
+
+            if (unread > 0) {
+                badge.textContent = unread;
+                badge.classList.remove("hidden");
+            } else {
+                badge.textContent = "0";
+                badge.classList.add("hidden");
+            }
+        }
+
+        // Render daftar pesan
+        function renderPesanMasuk() {
+            const list = document.getElementById("pesan-list");
+            const empty = document.getElementById("pesan-empty");
+            const total = document.getElementById("pesan-total");
+
+            // Update total pesan masuk di dashboard
+            const dashboardTotalPesan = document.getElementById("dashboard-total-pesan");
+
+            if (dashboardTotalPesan) {
+                dashboardTotalPesan.textContent = dataPesanMasuk.length;
+            }
+
+            if (!list || !empty) return;
+
+            let filtered = dataPesanMasuk;
+
+            if (filterPesanAktif === "Belum Dibaca") {
+                filtered = dataPesanMasuk.filter(
+                    pesan => pesan.status !== "Sudah Dibaca"
+                );
+            } else if (filterPesanAktif === "Sudah Dibaca") {
+                filtered = dataPesanMasuk.filter(
+                    pesan => pesan.status === "Sudah Dibaca"
+                );
+            }
+
+            if (total) {
+                total.textContent = `${dataPesanMasuk.length} Pesan`;
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = "";
+                empty.classList.remove("hidden");
+
+                const emptyTitle = empty.querySelector("h4");
+                const emptyText = empty.querySelector("p");
+
+                if (filterPesanAktif === "Belum Dibaca") {
+                    emptyTitle.textContent = "Tidak Ada Pesan Baru";
+                    emptyText.textContent = "Semua pesan sudah dibaca.";
+                } else if (filterPesanAktif === "Sudah Dibaca") {
+                    emptyTitle.textContent = "Belum Ada Pesan Dibaca";
+                    emptyText.textContent = "Pesan yang sudah dibaca akan muncul di sini.";
+                } else {
+                    emptyTitle.textContent = "Belum Ada Pesan";
+                    emptyText.textContent = "Pesan dari pengunjung website akan muncul di sini.";
+                }
+
+                lucide.createIcons();
+                return;
+            }
+
+            empty.classList.add("hidden");
+
+            list.innerHTML = filtered.map(pesan => {
+            const belumDibaca = pesan.status !== "Sudah Dibaca";
+
+            const nama = escapeHTMLPesan(pesan.nama);
+            const wa = escapeHTMLPesan(pesan.whatsapp);
+            const email = escapeHTMLPesan(pesan.email);
+            const isi = escapeHTMLPesan((pesan.pesan || "").trim());
+            const waktu = escapeHTMLPesan(
+                formatWaktuPesan(pesan.waktu || pesan.createdAt)
+            );
+
+            const nomorWA = nomorWhatsAppPesan(pesan.whatsapp);
+
+            return `
+                <div class="h-full flex flex-col bg-white rounded-xl border ${
+                    belumDibaca
+                        ? "border-emerald-200 shadow-sm"
+                        : "border-gray-100"
+                } p-3.5 hover:shadow-sm transition duration-200">
+
+                    <!-- HEADER KOTAK -->
+                    <div class="flex items-start justify-between gap-3">
+
+                        <div class="flex items-center gap-2.5 min-w-0">
+
+                            <div class="w-9 h-9 rounded-full flex-shrink-0 ${
+                                belumDibaca
+                                    ? "bg-emerald-100 text-emerald-700"
+                                    : "bg-gray-100 text-gray-500"
+                            } flex items-center justify-center">
+
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                            </div>
+
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-sm text-gray-800 truncate">
+                                    ${nama}
+                                </h4>
+
+                                <p class="text-[11px] text-gray-400 mt-0.5">
+                                    ${waktu}
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <!-- STATUS -->
+                        <span class="flex-shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-semibold ${
+                            belumDibaca
+                                ? "bg-amber-50 text-amber-700"
+                                : "bg-gray-100 text-gray-500"
+                        }">
+                            ${belumDibaca ? "Belum dibaca" : "Dibaca"}
+                        </span>
+
+                    </div>
+
+                    <!-- PESAN -->
+        <details class="mt-3 group">
+
+            <summary class="list-none cursor-pointer">
+
+                <!-- PREVIEW SAAT TERTUTUP -->
+                <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 group-open:hidden">
+
+                    <p class="text-sm text-gray-600 leading-relaxed line-clamp-2 break-words">
+                        ${isi}
+                    </p>
+
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-[11px] font-medium text-emerald-700">
+                            Baca pesan
+                        </span>
+
+                        <i data-lucide="chevron-down"
+                            class="w-4 h-4 text-emerald-700"></i>
+                    </div>
+
+                </div>
+
+                <!-- TOMBOL TUTUP SAAT TERBUKA -->
+                <div class="hidden group-open:flex items-center justify-between px-1 pt-0 pb-2">
+
+                    <span class="text-xs font-semibold text-gray-500">
+                        Detail pesan
+                    </span>
+
+                    <span class="flex items-center gap-1 text-xs font-medium text-emerald-700">
+                        Tutup
+                        <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                    </span>
+
+                </div>
+
+            </summary>
+
+            <!-- ISI DETAIL -->
+            <div class="!mt-0 !pt-0 rounded-xl border border-gray-100 bg-white overflow-hidden">
+                <!-- FULL MESSAGE -->
+                <div class="px-4 pb-4 pt-0 bg-gray-50/80">
+
+                    <p class="!mt-0 !mb-0 !pt-0 text-sm text-gray-700 leading-7 whitespace-pre-wrap break-words">
+                        ${isi}
+                    </p>
+
+                </div>
+
+                <!-- CONTACT INFO -->
+                <div class="px-4 py-3 border-t border-gray-100 space-y-2">
+
+                    ${
+                        pesan.whatsapp
+                        ? `
+                            <div class="flex items-center gap-2 text-xs text-gray-500">
+                                <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+                                <span>${wa}</span>
+                            </div>
+                        `
+                        : ""
+                    }
+
+                    ${
+                        pesan.email
+                        ? `
+                            <div class="flex items-center gap-2 text-xs text-gray-500">
+                                <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                                <span class="break-all">${email}</span>
+                            </div>
+                        `
+                        : ""
+                    }
+
+                </div>
+
+            </div>
+
+        </details>
+
+                    <!-- ACTION BUTTONS -->
+        <div class="flex items-center gap-2 mt-auto pt-3 border-t border-gray-100">
+
+            <!-- WHATSAPP -->
+            ${
+                pesan.whatsapp && nomorWA
+                ? `
+                    <a href="https://wa.me/${nomorWA}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold transition">
+
+                        <i data-lucide="message-circle" class="w-4 h-4"></i>
+                        WhatsApp
+                    </a>
+                `
+                : ""
+            }
+
+            <!-- TANDAI DIBACA -->
+            ${
+                belumDibaca
+                ? `
+                    <button onclick="tandaiPesanDibaca('${pesan.id}')"
+                        class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition">
+
+                        <i data-lucide="check-check" class="w-4 h-4"></i>
+                        Tandai dibaca
+                    </button>
+                `
+                : `
+                    <div class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-gray-50 text-gray-400 text-xs">
+                        <i data-lucide="check-check" class="w-4 h-4"></i>
+                        Sudah dibaca
+                    </div>
+                `
+            }
+
+            <!-- HAPUS -->
+            <button onclick="hapusPesanMasuk('${pesan.id}')"
+                title="Hapus pesan"
+                class="w-10 flex-shrink-0 flex items-center justify-center py-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition">
+
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+
+        </div>
+
+                </div>
+            `;
+        }).join("");
+
+        lucide.createIcons();
+        }
+
+        // =====================================================
+        // FILTER PESAN
+        // =====================================================
+
+        window.filterPesan = function(status) {
+            filterPesanAktif = status;
+
+            const buttons = document.querySelectorAll(".filter-pesan-btn");
+
+            // Reset seluruh tombol filter
+            buttons.forEach(btn => {
+                btn.classList.remove("bg-[#064E36]", "text-white");
+                btn.classList.add("bg-white", "border", "border-gray-200", "text-gray-600");
+            });
+
+            // Aktifkan tombol sesuai filter yang dipilih
+            buttons.forEach(btn => {
+                const label = btn.textContent.trim();
+
+                const aktif =
+                    (status === "semua" && label === "Semua") ||
+                    label === status;
+
+                if (aktif) {
+                    btn.classList.remove("bg-white", "border", "border-gray-200", "text-gray-600");
+                    btn.classList.add("bg-[#064E36]", "text-white");
+                }
+            });
+
+            // Render ulang list dan empty state
+            renderPesanMasuk();
+        };
+
+
+        function getBookingWhatsAppLink(booking) {
+            let phone = String(booking.telepon || booking.whatsapp || "")
+                .replace(/\D/g, "");
+
+            // Normalisasi nomor Indonesia
+            if (phone.startsWith("0")) {
+                phone = "62" + phone.substring(1);
+            } else if (phone.startsWith("8")) {
+                phone = "62" + phone;
+            }
+
+            if (!phone) return "#";
+
+            const bookingCode = booking.bookingId || booking.id;
+
+            // Format daftar add-ons
+            const daftarAddons = Array.isArray(booking.addons)
+                && booking.addons.length > 0
+                ? booking.addons.map(addon => {
+                    const namaAddon = addon.nama || addon.name || "Add-on";
+                    const hargaAddon = Number(addon.subtotal || addon.harga || 0);
+
+                    return `- ${namaAddon} (Rp ${hargaAddon.toLocaleString("id-ID")})`;
+                }).join("\n")
+                : "- Tidak ada add-ons";
+
+            // Format pesan WhatsApp
+            const message = `Halo Kak ${booking.nama || ""}.
+
+        Kami dari pengelola Edu Wisata Bambu Mekarsari ingin mengonfirmasi pemesanan Kakak.
+
+        *DETAIL PEMESANAN*
+        ID Booking: ${bookingCode}
+        Paket: ${booking.paketNama || "-"}
+        Tanggal Kunjungan: ${booking.tanggal || "-"}
+        Jumlah Peserta: ${booking.peserta || 0} orang
+
+        *ADD-ONS YANG DIPILIH*
+        ${daftarAddons}
+
+        ________________________________
+
+        *Total Pembayaran: Rp ${Number(booking.totalHarga || 0).toLocaleString("id-ID")}
+        ________________________________
+
+        Apakah detail pemesanan ini sudah sesuai?
+
+        Terima kasih 🙏`;
+
+            return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        }
+
+
+
+        // =========================================================
+        // PENGATURAN PROFIL DESTINASI — FIRESTORE
+        // =========================================================
+
+        let pengaturanDocId = null;
+        let unsubscribePengaturan = null;
+
+
+        // KOSONGKAN FORM PENGATURAN
+        function resetFormPengaturan() {
+            const fields = [
+                "set-wilayah",
+                "set-alamat",
+                "set-telp",
+                "set-email",
+                "set-jam",
+                "set-ig",
+                "set-yt"
+            ];
+
+            fields.forEach(id => {
+                const element = document.getElementById(id);
+
+                if (element) {
+                    element.value = "";
+                }
+            });
+        }
+
+
+        // ID DOKUMEN KONFIGURASI UTAMA
+        const MAIN_CONFIG_ID = "GJ62CtVFYxrHqnJczdkQ";
+
+        // 1. LOAD PENGATURAN DARI FIRESTORE
+        function initPengaturan() {
+
+            // Hindari listener ganda
+            if (unsubscribePengaturan) {
+                unsubscribePengaturan();
+            }
+
+            // Kosongkan form sebelum mengambil data
+            resetFormPengaturan();
+
+            unsubscribePengaturan = subscribeDocuments(
+                COLLECTIONS.contact,
+                (data) => {
+
+                    // Ambil dokumen konfigurasi utama berdasarkan ID
+                    const pengaturan = data.find(
+                        item => item.id === MAIN_CONFIG_ID
+                    );
+
+                    if (!pengaturan) {
+                        console.error(
+                            "Dokumen konfigurasi utama tidak ditemukan:",
+                            MAIN_CONFIG_ID
+                        );
+
+                        pengaturanDocId = null;
+                        resetFormPengaturan();
+
+                        showToast(
+                            "Dokumen pengaturan utama tidak ditemukan!",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+                    // Simpan ID dokumen yang digunakan
+                    pengaturanDocId = pengaturan.id;
+
+                    // Isi form dari Firestore
+
+                    document.getElementById("set-wilayah").value =
+                        pengaturan.wilayah || "";
+
+                    document.getElementById("set-alamat").value =
+                        pengaturan.alamat || "";
+
+                    document.getElementById("set-telp").value =
+                        pengaturan.telp || "";
+
+                    document.getElementById("set-email").value =
+                        pengaturan.email || "";
+
+                    document.getElementById("set-jam").value =
+                        pengaturan.jam || "";
+
+                    document.getElementById("set-ig").value =
+                        pengaturan.instagram || "";
+
+                    document.getElementById("set-yt").value =
+                        pengaturan.youtube || "";
+                    
+                },
+                {},
+                (error) => {
+                    console.error("Gagal memuat pengaturan:", error);
+
+                    showToast(
+                        "Gagal memuat data pengaturan",
+                        "error"
+                    );
+                }
+            );
+        }
+
+
+        // 2. SIMPAN / UPDATE PENGATURAN
+        async function savePengaturan(event) {
+            event.preventDefault();
+
+            const button = event.submitter;
+            const originalButtonHTML = button ? button.innerHTML : "";
+
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = `
+                    <i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>
+                    <span>Menyimpan...</span>
+                `;
+                lucide.createIcons();
+            }
+
+            const dataPengaturan = {
+                wilayah: document.getElementById("set-wilayah").value.trim(),
+                alamat: document.getElementById("set-alamat").value.trim(),
+                telp: document.getElementById("set-telp").value.trim(),
+                email: document.getElementById("set-email").value.trim(),
+                jam: document.getElementById("set-jam").value.trim(),
+                instagram: document.getElementById("set-ig").value.trim(),
+                youtube: document.getElementById("set-yt").value.trim()
+            };
+            console.log("DATA YANG AKAN DISIMPAN:", dataPengaturan);
+            console.log("ID DOKUMEN YANG DIUPDATE:", pengaturanDocId);
+
+            try {
+
+                if (pengaturanDocId) {
+
+                    // UPDATE dokumen yang sudah ada
+                    await updateDocument(
+                        COLLECTIONS.contact,
+                        pengaturanDocId,
+                        dataPengaturan
+                    );
+
+                } else {
+
+                    // BUAT dokumen baru jika belum tersedia
+                    const docRef = await createDocument(
+                        COLLECTIONS.contact,
+                        dataPengaturan
+                    );
+
+                    pengaturanDocId = docRef.id;
+
+                }
+
+                showToast(
+                    "Pengaturan berhasil disimpan!",
+                    "success"
+                );
+
+            } catch (error) {
+
+                console.error("Gagal menyimpan pengaturan:", error);
+
+                showToast(
+                    "Gagal menyimpan pengaturan!",
+                    "error"
+                );
+
+            } finally {
+
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = originalButtonHTML;
+                    lucide.createIcons();
+                }
+
+            }
+        }
+
+        // =========================================================
+        // EXPOSE FUNCTIONS TO HTML INLINE EVENTS
+        // =========================================================
+
+        window.switchTab = switchTab;
+
+        window.showToast = showToast;
+
+        window.openModalPemesanan = openModalPemesanan;
+        window.closeModalPemesanan = closeModalPemesanan;
+        window.updateBookingStatus = updateBookingStatus;
+
+        window.renderBookingsTable = renderBookingsTable;
+
+
+        window.savePengaturan = savePengaturan;
+
+        window.handleLogout = handleLogout;
+
+
+
+        // =========================================
+        // LOGOUT ADMIN
+        // =========================================
+
+        window.handleLogout = async function () {
+            try {
+                await signOut(auth);
+
+                window.location.replace("./login.html");
+
+            } catch (error) {
+                console.error("Logout gagal:", error);
+                alert("Gagal logout. Silakan coba kembali.");
+            }
+        };
+
+
+        function updateCurrentDate() {
+            const dateElement = document.getElementById('current-date');
+            if (!dateElement) return;
+
+            const today = new Date();
+
+            dateElement.textContent = today.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+</script>
+
+<script type="module" src="assets/js/admin-packages.js"></script>
+<script type="module" src="assets/js/admin-gallery.js"></script>
+<script type="module" src="assets/js/admin-images.js"></script>
+<!-- Generate PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Generate gambar PNG -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
