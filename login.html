@@ -449,8 +449,48 @@
 
 <script type="module" src="assets/js/login-auth.js"></script>
 <script type="module" src="assets/js/login-images.js"></script>
+<script type="module" src="assets/js/login-auth.js"></script>
+<script type="module" src="assets/js/login-images.js"></script>
+
 <script>
+    // Render seluruh ikon Lucide
     lucide.createIcons();
+
+    // Toggle Password
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+    const passwordInput = document.getElementById('password');
+
+    if (togglePasswordBtn && passwordInput) {
+        togglePasswordBtn.addEventListener('click', function () {
+
+            // Cek kondisi password saat ini
+            const isHidden = passwordInput.type === 'password';
+
+            // Ubah tipe input password
+            passwordInput.type = isHidden ? 'text' : 'password';
+
+            // Update accessibility
+            togglePasswordBtn.setAttribute(
+                'aria-label',
+                isHidden ? 'Sembunyikan password' : 'Tampilkan password'
+            );
+
+            togglePasswordBtn.setAttribute(
+                'aria-pressed',
+                isHidden ? 'true' : 'false'
+            );
+
+            // Ganti ikon mata
+            togglePasswordBtn.innerHTML = isHidden
+                ? '<i data-lucide="eye" class="w-5 h-5 stroke-[1.8]"></i>'
+                : '<i data-lucide="eye-off" class="w-5 h-5 stroke-[1.8]"></i>';
+
+            // Render ikon Lucide baru
+            lucide.createIcons();
+        });
+    }
 </script>
+</body>
+</html>
 </body>
 </html>
